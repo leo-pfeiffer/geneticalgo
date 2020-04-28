@@ -1,6 +1,7 @@
 import numpy as np
 from operator import attrgetter
-from SC import returntscc
+from SC import returntscc, evaluate
+import matplotlib.pyplot as plt
 
 
 class GA:
@@ -19,14 +20,19 @@ class GA:
             chrom.evaluate()
 
     def runAlgorithm(self, maxGen):
+        x = []
+        y = []
         while self.no_gen <= maxGen:
             self.no_gen += 1
             self.selection()
             self.crossover()
             self.mutation()
             self.survival()
-
+            x.append(self.no_gen)
+            y.append(sum([x.tscc for x in self.par_pop]))
             print(self.no_gen, sum([x.tscc for x in self.par_pop]))
+        plt.plot(x, y)
+        plt.show()
 
     def selection(self):
         """Select chromosomes for mating pool"""
@@ -81,7 +87,7 @@ class CHROM:
     def __init__(self, **kwargs):
         self.no = kwargs.get('no', -999)
         self.minRLT = np.array([1, 2, 4, 8])
-        self.maxRLT = self.minRLT.cumsum()[::-1]
+        self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
         self.lowerU = 10
         self.upperU = 20
         self.chromosome = kwargs.get('genes', self.generateChromosome())
@@ -95,4 +101,4 @@ class CHROM:
 
     def evaluate(self):
         """Run the SC model and evaluate TSCC"""
-        self.tscc = returntscc(self.chromosome)
+        self.tscc = evaluate(self.chromosome)
