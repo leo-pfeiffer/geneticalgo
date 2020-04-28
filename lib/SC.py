@@ -90,7 +90,7 @@ class SC:
                     ordered += orderQuantity
                     print("R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity)
 
-                    # Problem: We receive more than we order so we get negative onOrderInventory after a while
+                    # Problem: We receive more than we order so we get negative onOrderInventory after some time
 
             # 7 calculate supply chain contexts
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
