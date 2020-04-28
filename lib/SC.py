@@ -12,13 +12,11 @@ class AGENT:
         self.shortagecost_rate = scs
         self.holdingcost_is = 0
         self.shortagecost_is = 0
-        self.inventory = 0  # maybe this should be initiated with the basestock levels
+        self.onHandInventory = basestock  # maybe this should be initiated with the 0 ?
+        self.onOrderInventory = 0  # keep track of orders that haven't arrived yet
         self.backlog = 0  # existing backlog
-        self.order = 0    # order from downstream
+        self.order = 0  # order from downstream
         self.receive = [0] * int(np.floor(self.T * 1.5))  # received amount from upstream; account for schedule beyond T
-
-    def updateInventory(self, amount):
-        self.inventory += amount
 
 
 class SC:
@@ -27,34 +25,41 @@ class SC:
         self.agents = agents
         self.N = len(self.agents)
         self.T = T
-        self.demand = np.random.randint(10, 21, self.T)
+        self.demand = np.random.randint(20, 61, self.T)
         self.scc = [0] * self.T
         self.tscc = 0
 
     def simulate(self):
+        inv = []
+        print("onHandInventory, onOrderInventory, Order, Backlog, Receive(t)")
+        received = 0
+        ordered = 0
         for t in range(0, self.T):
+            inv_agent = []
             # update the order info from
             for i, agent in enumerate(self.agents):
+                inv_agent.append(agent.onHandInventory)
                 # 1 scheduled receipt of material at agent
-                agent.inventory += agent.receive[t]
+                agent.onHandInventory += agent.receive[t]
+                agent.onOrderInventory -= agent.receive[t]
                 # 2 backlog is filled as much as possible
                 if agent.backlog > 0:
-                    newBacklog = max(agent.backlog - agent.inventory, 0)
+                    newBacklog = max(agent.backlog - agent.onHandInventory, 0)
                     # for all agents except retailer, schedule reception for downstream agent
                     if agent.no != 0:
                         downstream = self.agents[agent.no - 1]
                         downstream.receive[t + downstream.rlt] += agent.backlog - newBacklog
-                    agent.inventory = max(agent.inventory - agent.backlog, 0)
-                    agent.backlog = newBacklog  # check if this should be +=: probably not.
-                    # maybe do shipping to customer as well ?
-                # 3
-                # agents receive demand/order quantity from immediate downstream member
+                    agent.onHandInventory = max(agent.onHandInventory - agent.backlog, 0)
+                    agent.backlog = newBacklog
+
+                # 3 agents receive demand/order quantity from immediate downstream member
                 if agent.no == 0:
                     agent.order = self.demand[t]
 
                 # 4
-                # send order to upstream (basestock - inventory) -> received immediately
-                orderQuantity = max(agent.basestock - agent.inventory, 0)
+                # send order to upstream (basestock - onHandInventory) -> received immediately
+                orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
+                agent.onOrderInventory += orderQuantity
                 if agent.no != 3:
                     upstream = self.agents[agent.no + 1]
                     upstream.order += orderQuantity
@@ -66,18 +71,33 @@ class SC:
                 # 5
                 # order fulfillment. demand/orders of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
-                shippment = min(agent.order, agent.inventory)
-                agent.backlog += agent.order - shippment
+                shipment = min(agent.order, agent.onHandInventory)
+                agent.backlog += agent.order - shipment
+
                 if agent.no != 0:
                     downstream = self.agents[agent.no - 1]
-                    downstream.receive[t + downstream.rlt] += shippment
-                    # customer receives shipping immediately
+                    downstream.receive[t + downstream.rlt] += shipment
+                    # customer receives shipment immediately
 
-                # 6
-                agent.holdingcost_is = agent.holdingcost_rate * agent.inventory
+                # 6 update inventory and calculate local costs
+                agent.onHandInventory -= shipment
+                agent.onOrderInventory += orderQuantity
+                agent.holdingcost_is = agent.holdingcost_rate * agent.onHandInventory
                 agent.shortagecost_is = agent.shortagecost_rate * agent.backlog
-            # 7
+
+                if agent.no == 0:
+                    received += agent.receive[t]
+                    ordered += orderQuantity
+                    print("R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity)
+
+                    # Problem: We receive more than we order so we get negative onOrderInventory after a while
+
+            # 7 calculate supply chain contexts
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
+            inv.append(inv_agent)
+
+            #print(t, [x.onHandInventory for x in self.agents], [x.onOrderInventory for x in self.agents],
+            #      [x.order for x in self.agents], [x.backlog for x in self.agents], [x.receive[t] for x in self.agents])
 
         self.tscc = np.array(self.scc).cumsum()[-1]
 
@@ -91,9 +111,9 @@ def evaluate(chromosome):
     # Initialise
     agents = []
     T = 1200
-    rlt = np.array([1, 2, 4, 8])
-    hcs = np.array([1, 2, 4, 8])
-    scs = np.array([3, 6, 12, 24])
+    rlt = np.array([1, 3, 5, 4])
+    hcs = np.array([8, 4, 2, 1])
+    scs = np.array([24, 12, 6, 3])
     for i, chrom in enumerate(chromosome):
         agents.append(AGENT(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i], T=T))
 

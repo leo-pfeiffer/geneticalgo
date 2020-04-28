@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 
 class GA:
     def __init__(self):
-        self.par_pop = [CHROM(no=1), CHROM(no=2), CHROM(no=3), CHROM(no=4)]  # parent population
-        self.int_pop = []  # intermediate population
-        self.n = 4  # number of chromosomes (= pop_size); fixed
+        self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
+        self.par_pop = [CHROM(no=i) for i in range(1, self.n+1)] # parent population
+        self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
         self.mr = 0.1  # mutation rate (probability)
@@ -29,9 +29,13 @@ class GA:
             self.mutation()
             self.survival()
             x.append(self.no_gen)
-            y.append(sum([x.tscc for x in self.par_pop]))
-            print(self.no_gen, sum([x.tscc for x in self.par_pop]))
+            y.append(self.par_pop[0].tscc)
+            print(self.no_gen, self.par_pop[0].tscc)
+            if self.no_gen % 10 == 0:
+                print(self.par_pop[0].chromosome)
         plt.plot(x, y)
+        plt.ylabel("TSCC")
+        plt.xlabel("Generation number")
         plt.show()
 
     def selection(self):
@@ -42,7 +46,8 @@ class GA:
 
         self.pool = [next(chrom for chrom, val in enumerate(probabilities) if val >= np.random.uniform(0, 1))]
         while len(self.pool) < self.n:
-            cn = next(chrom for chrom, val in enumerate(probabilities) if val >= np.random.uniform(0, 1))
+            r = np.random.uniform(0, 1)
+            cn = next(chrom for chrom, val in enumerate(probabilities) if val >= r)
             if cn not in self.pool:
                 self.pool.append(cn)
 
@@ -86,10 +91,10 @@ class CHROM:
 
     def __init__(self, **kwargs):
         self.no = kwargs.get('no', -999)
-        self.minRLT = np.array([1, 2, 4, 8])
+        self.minRLT = np.array([1, 3, 5, 4])    # make this variable
         self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
-        self.lowerU = 10
-        self.upperU = 20
+        self.lowerU = 20
+        self.upperU = 60
         self.chromosome = kwargs.get('genes', self.generateChromosome())
         self.tscc = 0
 
