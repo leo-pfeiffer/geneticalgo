@@ -31,7 +31,7 @@ class SC:
 
     def simulate(self):
         inv = []
-        print("onHandInventory, onOrderInventory, Order, Backlog, Receive(t)")
+        # print("onHandInventory, onOrderInventory, Order, Backlog, Receive(t)")
         received = 0
         ordered = 0
         for t in range(0, self.T):
@@ -58,11 +58,14 @@ class SC:
 
                 # 4
                 # send order to upstream (basestock - onHandInventory) -> received immediately
+                shipment = min(agent.order, agent.onHandInventory) #####
+                agent.onHandInventory -= shipment #####
+
                 orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
-                agent.onOrderInventory += orderQuantity
+
                 if agent.no != 3:
                     upstream = self.agents[agent.no + 1]
-                    upstream.order += orderQuantity
+                    upstream.order = orderQuantity
                     # maybe add external source
                 else:
                     # supplier receives order from infinite source after rlt
@@ -71,7 +74,7 @@ class SC:
                 # 5
                 # order fulfillment. demand/orders of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
-                shipment = min(agent.order, agent.onHandInventory)
+                ## shipment = min(agent.order, agent.onHandInventory)
                 agent.backlog += agent.order - shipment
 
                 if agent.no != 0:
@@ -80,15 +83,16 @@ class SC:
                     # customer receives shipment immediately
 
                 # 6 update inventory and calculate local costs
-                agent.onHandInventory -= shipment
+                ## agent.onHandInventory -= shipment
                 agent.onOrderInventory += orderQuantity
                 agent.holdingcost_is = agent.holdingcost_rate * agent.onHandInventory
                 agent.shortagecost_is = agent.shortagecost_rate * agent.backlog
 
-                if agent.no == 0:
+                if agent.no in [0]:
                     received += agent.receive[t]
                     ordered += orderQuantity
-                    print("R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity)
+                    print(t, agent.no, "R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity,
+                          "Demand:", self.demand[t], "onHandInventory:", agent.onHandInventory, "onOrderInventory:", agent.onOrderInventory)
 
                     # Problem: We receive more than we order so we get negative onOrderInventory after some time
 
@@ -96,7 +100,7 @@ class SC:
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
             inv.append(inv_agent)
 
-            #print(t, [x.onHandInventory for x in self.agents], [x.onOrderInventory for x in self.agents],
+            # print(t, [x.onHandInventory for x in self.agents], [x.onOrderInventory for x in self.agents],
             #      [x.order for x in self.agents], [x.backlog for x in self.agents], [x.receive[t] for x in self.agents])
 
         self.tscc = np.array(self.scc).cumsum()[-1]

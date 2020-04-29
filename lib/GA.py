@@ -70,7 +70,7 @@ class GA:
             for g, gene in enumerate(chrom.chromosome):
                 u = np.random.uniform(0, 1)
                 if u <= self.mr:
-                    newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u)))
+                    newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u))) #???
                 else:
                     newGenes.append(gene)
             self.int_pop[c] = CHROM(genes=np.array(newGenes))
@@ -105,5 +105,7 @@ class CHROM:
         return np.array([np.random.randint(l, u + 1) for l, u in zip(lower, upper)])
 
     def evaluate(self):
+        # rename!!!
         """Run the SC model and evaluate TSCC"""
+        # self.tscc = returntscc(self.chromosome)
         self.tscc = evaluate(self.chromosome)
