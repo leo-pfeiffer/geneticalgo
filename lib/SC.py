@@ -58,8 +58,8 @@ class SC:
 
                 # 4
                 # send order to upstream (basestock - onHandInventory) -> received immediately
-                shipment = min(agent.order, agent.onHandInventory) #####
-                agent.onHandInventory -= shipment #####
+                ##shipment = min(agent.order, agent.onHandInventory) #####
+                ##agent.onHandInventory -= shipment #####
 
                 orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
 
@@ -74,7 +74,7 @@ class SC:
                 # 5
                 # order fulfillment. demand/orders of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
-                ## shipment = min(agent.order, agent.onHandInventory)
+                shipment = min(agent.order, agent.onHandInventory)
                 agent.backlog += agent.order - shipment
 
                 if agent.no != 0:
@@ -83,7 +83,7 @@ class SC:
                     # customer receives shipment immediately
 
                 # 6 update inventory and calculate local costs
-                ## agent.onHandInventory -= shipment
+                agent.onHandInventory -= shipment
                 agent.onOrderInventory += orderQuantity
                 agent.holdingcost_is = agent.holdingcost_rate * agent.onHandInventory
                 agent.shortagecost_is = agent.shortagecost_rate * agent.backlog
