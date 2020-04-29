@@ -104,7 +104,6 @@ class SC:
 
 def returntscc(chromosome):
     goal = [12, 13, 4, 17]
-    print("Hello Hello Hello")
     return sum([abs(x - y) for x, y in zip(chromosome, goal)])
 
 
