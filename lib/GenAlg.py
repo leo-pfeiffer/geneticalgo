@@ -1,42 +1,34 @@
 import numpy as np
 from operator import attrgetter
-from SC import returntscc, evaluate
+from SupplyChain import returntscc, runSC
 import matplotlib.pyplot as plt
 
 
-class GA:
+class GenAlg:
     def __init__(self):
         self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
-        self.par_pop = [CHROM(no=i) for i in range(1, self.n+1)] # parent population
+        self.par_pop = [Chrom(no=i) for i in range(1, self.n + 1)] # parent population
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
         self.mr = 0.1  # mutation rate (probability)
         self.x = 0.2  # parameter for mutation
         self.no_gen = 0
+        self.tscc = []  # save tscc of each generation for analysis
 
         for chrom in self.par_pop:
             chrom.evaluate()
 
     def runAlgorithm(self, maxGen):
-        x = []
-        y = []
-        while self.no_gen <= maxGen:
+        while self.no_gen < maxGen:
             self.no_gen += 1
             self.selection()
             self.crossover()
             self.mutation()
             self.survival()
-            x.append(self.no_gen)
-            y.append(self.par_pop[0].tscc)
-            print(self.no_gen, self.par_pop[0].tscc)
-            if self.no_gen % 10 == 0:
-                print(self.par_pop[0].chromosome)
-        plt.plot(x, y)
-        plt.ylabel("TSCC")
-        plt.xlabel("Generation number")
-        plt.show()
+
+            self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def selection(self):
         """Select chromosomes for mating pool"""
@@ -60,7 +52,7 @@ class GA:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [CHROM(genes=cross1), CHROM(genes=cross2)]
+                self.int_pop = [Chrom(genes=cross1), Chrom(genes=cross2)]
             else:
                 self.int_pop = self.pool[i*2:(i*2+1)]
 
@@ -73,7 +65,7 @@ class GA:
                     newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u)))
                 else:
                     newGenes.append(gene)
-            self.int_pop[c] = CHROM(genes=np.array(newGenes))
+            self.int_pop[c] = Chrom(genes=np.array(newGenes))
 
         int(0)  # should have new int_pop
 
@@ -87,7 +79,7 @@ class GA:
             chrom.no = self.no_gen + i
 
 
-class CHROM:
+class Chrom:
 
     def __init__(self, **kwargs):
         self.no = kwargs.get('no', -999)
@@ -108,4 +100,4 @@ class CHROM:
         # rename!!!
         """Run the SC model and evaluate TSCC"""
         # self.tscc = returntscc(self.chromosome)
-        self.tscc = evaluate(self.chromosome)
+        self.tscc = runSC(self.chromosome)

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class AGENT:
+class Agent:
 
     def __init__(self, no, basestock, rlt, hcs, scs, T):
         self.no = no
@@ -19,7 +19,7 @@ class AGENT:
         self.receive = [0] * int(np.floor(self.T * 1.5))  # received amount from upstream; account for schedule beyond T
 
 
-class SC:
+class SupplyChain:
 
     def __init__(self, agents, T):
         self.agents = agents
@@ -91,8 +91,8 @@ class SC:
                 if agent.no in [0]:
                     received += agent.receive[t]
                     ordered += orderQuantity
-                    print(t, agent.no, "R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity,
-                          "Demand:", self.demand[t], "onHandInventory:", agent.onHandInventory, "onOrderInventory:", agent.onOrderInventory)
+                    # print(t, agent.no, "R_total:", received, "O_total:", ordered, "R_cur:", agent.receive[t], "O_cur:", orderQuantity,
+                    #       "Demand:", self.demand[t], "onHandInventory:", agent.onHandInventory, "onOrderInventory:", agent.onOrderInventory)
 
                     # Problem: We receive more than we order so we get negative onOrderInventory after some time
 
@@ -111,7 +111,7 @@ def returntscc(chromosome):
     return sum([abs(x - y) for x, y in zip(chromosome, goal)])
 
 
-def evaluate(chromosome):
+def runSC(chromosome):
     # Initialise
     agents = []
     T = 1200
@@ -119,9 +119,9 @@ def evaluate(chromosome):
     hcs = np.array([8, 4, 2, 1])
     scs = np.array([24, 12, 6, 3])
     for i, chrom in enumerate(chromosome):
-        agents.append(AGENT(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i], T=T))
+        agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i], T=T))
 
-    S = SC(agents=agents, T=T)
+    S = SupplyChain(agents=agents, T=T)
     S.simulate()
 
     return S.tscc
