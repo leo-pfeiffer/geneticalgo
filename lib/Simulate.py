@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from GenAlg import GenAlg
@@ -18,6 +19,9 @@ for i in tqdm(iterations):
     chromosomes.append(GA.par_pop[0].chromosome)
 
 avg_tscc = np.mean(tscc, axis=0)
+sd_tscc = np.std(tscc, axis=0)
+
+pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv("Report.csv")
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
@@ -29,9 +33,9 @@ best_chrom = chromosomes[np.argmin([x[-1] for x in tscc])].tolist()
 text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, Supplier: {}"
 text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3])
 
-ax.text(max_gen-1, avg_tscc[0], text, fontsize=10, va="center", ha="right")
+ax.text(max_gen-1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
-
+plt.savefig("Report.png")
 plt.show()
 
 # tscc1 = runSC([183, 230, 153, 52])
