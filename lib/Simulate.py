@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from GenAlg import GenAlg
 from SupplyChain import runSC
-
+"""
 tscc = []
 max_gen = 500
 chromosomes = []
@@ -37,6 +37,13 @@ ax.text(max_gen-1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
 plt.savefig("Report.png")
 plt.show()
+"""
+x = 0
+for i in range(1000):
+    # tscc1 = runSC([183, 230, 143, 52])
+    tscc1 = runSC([52, 143, 230, 183])
+    print(tscc1)
+    x += tscc1
 
-# tscc1 = runSC([183, 230, 153, 52])
+print("\n", x/1000)
 

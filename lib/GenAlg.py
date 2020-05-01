@@ -1,6 +1,6 @@
 import numpy as np
 from operator import attrgetter
-from SupplyChain import returntscc, runSC
+from SupplyChain import returnTSCC, runSC
 import matplotlib.pyplot as plt
 
 
@@ -99,5 +99,5 @@ class Chrom:
     def evaluate(self):
         # rename!!!
         """Run the SC model and evaluate TSCC"""
-        # self.tscc = returntscc(self.chromosome)
+        # self.tscc = returnTSCC(self.chromosome)
         self.tscc = runSC(self.chromosome)
