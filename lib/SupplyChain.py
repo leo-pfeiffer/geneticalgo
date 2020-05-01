@@ -25,7 +25,7 @@ class SupplyChain:
         self.agents = agents
         self.N = len(self.agents)
         self.T = 1200
-        self.demand = np.random.randint(args['lower'], args['upper'] + 1, self.T)
+        self.demand = np.random.randint(20, 61, self.T)
         self.scc = [0] * self.T
         self.tscc = 0
 

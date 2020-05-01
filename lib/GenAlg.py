@@ -88,8 +88,8 @@ class Chrom:
         self.no = kwargs.get('no', -999)
         self.minRLT = self.args['rlt']    # make this variable
         self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
-        self.lowerU = self.args['lower']
-        self.upperU = self.args['upper']
+        self.lowerU = 20
+        self.upperU = 60
         self.chromosome = kwargs.get('genes', self.generateChromosome())
         self.tscc = 0
         self.hcs = self.args['hcs']
