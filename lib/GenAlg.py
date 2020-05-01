@@ -5,10 +5,11 @@ import matplotlib.pyplot as plt
 
 
 class GenAlg:
-    def __init__(self):
+    def __init__(self, args):
+        self.args = args
         self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
-        self.par_pop = [Chrom(no=i) for i in range(1, self.n + 1)] # parent population
+        self.par_pop = [Chrom(no=i, args=args) for i in range(1, self.n + 1)]  # parent population
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
@@ -16,6 +17,9 @@ class GenAlg:
         self.x = 0.2  # parameter for mutation
         self.no_gen = 0
         self.tscc = []  # save tscc of each generation for analysis
+        self.rlt = args['rlt']
+        self.hcs = args['hcs']
+        self.scs = args['scs']
 
         for chrom in self.par_pop:
             chrom.evaluate()
@@ -52,7 +56,7 @@ class GenAlg:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [Chrom(genes=cross1), Chrom(genes=cross2)]
+                self.int_pop = [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
             else:
                 self.int_pop = self.pool[i*2:(i*2+1)]
 
@@ -65,9 +69,7 @@ class GenAlg:
                     newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u)))
                 else:
                     newGenes.append(gene)
-            self.int_pop[c] = Chrom(genes=np.array(newGenes))
-
-        int(0)  # should have new int_pop
+            self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
 
     def survival(self):
         for chrom in self.int_pop:
@@ -82,13 +84,16 @@ class GenAlg:
 class Chrom:
 
     def __init__(self, **kwargs):
+        self.args = kwargs.get('args')
         self.no = kwargs.get('no', -999)
-        self.minRLT = np.array([1, 3, 5, 4])    # make this variable
+        self.minRLT = self.args['rlt']    # make this variable
         self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
-        self.lowerU = 20
-        self.upperU = 60
+        self.lowerU = self.args['lower']
+        self.upperU = self.args['upper']
         self.chromosome = kwargs.get('genes', self.generateChromosome())
         self.tscc = 0
+        self.hcs = self.args['hcs']
+        self.scs = self.args['scs']
 
     def generateChromosome(self):
         """generate initial chromosomes"""
@@ -97,7 +102,6 @@ class Chrom:
         return np.array([np.random.randint(l, u + 1) for l, u in zip(lower, upper)])
 
     def evaluate(self):
-        # rename!!!
         """Run the SC model and evaluate TSCC"""
         # self.tscc = returnTSCC(self.chromosome)
-        self.tscc = runSC(self.chromosome)
+        self.tscc = runSC(self.chromosome, args=self.args)
