@@ -20,11 +20,11 @@ class Agent:
 
 class SupplyChain:
 
-    def __init__(self, agents, args):
+    def __init__(self, agents, demand):
         self.agents = agents
         self.N = len(self.agents)
         self.T = 1200
-        self.demand = np.random.randint(20, 61, self.T)
+        self.demand = demand
         self.scc = [0] * self.T
         self.tscc = 0
 
@@ -105,16 +105,17 @@ def returnTSCC(chromosome):
     return sum([abs(x - y) for x, y in zip(chromosome, goal)])
 
 
-def runSC(chromosome, args):
+def runSC(chromosome, args, **kwargs):
     # Initialise
     agents = []
     rlt = args['rlt']
     hcs = args['hcs']
     scs = args['scs']
+    demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
     for i, chrom in enumerate(chromosome):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i]))
 
-    S = SupplyChain(agents=agents, args=args)
+    S = SupplyChain(agents=agents, demand=demand)
     S.simulate()
 
     return S.tscc
