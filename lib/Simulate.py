@@ -26,8 +26,8 @@ a3 = {
 }
 
 b1 = {
-    'hcs': np.array([8, 4, 2, 1]),
-    'scs': np.array([24, 12, 6, 1]),
+    'hcs': np.array([8, 4, 2, ]),
+    'scs': np.array([24, 12, 6, 3]),
     'rlt': np.array([2, 3, 6, 4])
 }
 

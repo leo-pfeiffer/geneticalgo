@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Agent:
 
     def __init__(self, no, basestock, rlt, hcs, scs):

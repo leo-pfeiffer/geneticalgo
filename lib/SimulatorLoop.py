@@ -22,15 +22,15 @@ a2 = {
 }
 
 a3 = {
-    'hcs': np.array([10, 8, 6, 2]),
-    'scs': np.array([24, 12, 6, 3]),
+    'hcs': np.array([5, 4, 3, 1]),
+    'scs': np.array([10, 8, 6, 2]),
     'rlt': np.array([1, 3, 5, 4]),
     'name': 'A3'
 }
 
 b1 = {
     'hcs': np.array([8, 4, 2, 1]),
-    'scs': np.array([24, 12, 6, 1]),
+    'scs': np.array([24, 12, 6, 3]),
     'rlt': np.array([2, 3, 6, 4]),
     'name': 'B1'
 }
