@@ -91,9 +91,14 @@ plt.show()
 # Setup random sampling:
 
 n_it = 10000
+
+# w/ antithetic sampling
 sample = [np.random.randint(20, 61, 1400).tolist() for i in range(int(np.floor(n_it/2)))]
 anti_sample = [[80-u for u in demand] for demand in sample]
 demand = sample + anti_sample
+
+# w/o antithetic sampling
+# demand = [np.random.randint(20, 61, 1400).tolist() for i in range(n_it)]
 
 results = []
 tscc = []

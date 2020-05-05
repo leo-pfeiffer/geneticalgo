@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Agent:
 
     def __init__(self, no, basestock, rlt, hcs, scs):
@@ -49,6 +50,7 @@ class SupplyChain:
                     newBacklog = max(agent.backlog - agent.onHandInventory, 0)
 
                     # for all agents except retailer, schedule reception for downstream agent and do shipment
+                    # end customer receives order immediately (no need to be scheduled)
                     if agent.no != 0:
                         downstream.receive[t + downstream.rlt] += agent.backlog - newBacklog
 
@@ -69,6 +71,7 @@ class SupplyChain:
 
                 orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
 
+                # orders are received immediately
                 if agent.no != 3:
                     upstream.order = orderQuantity
                 else:
@@ -78,8 +81,6 @@ class SupplyChain:
                 # 5
                 # order fulfillment. demand/order of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
-                # agent.backlog += agent.order - shipment
-
                 if agent.no != 0:
                     downstream.receive[t + downstream.rlt] += shipment
                     # customer receives shipment immediately
