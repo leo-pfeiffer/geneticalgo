@@ -90,8 +90,8 @@ plt.show()
 
 # Setup random sampling:
 
-n_it = 500
-sample = [np.random.randint(20, 61, 1200).tolist() for i in range(int(np.floor(n_it/2)))]
+n_it = 10000
+sample = [np.random.randint(20, 61, 1400).tolist() for i in range(int(np.floor(n_it/2)))]
 anti_sample = [[80-u for u in demand] for demand in sample]
 demand = sample + anti_sample
 
@@ -100,7 +100,7 @@ tscc = []
 
 iterations = [*range(n_it)]
 
-for a, arg in enumerate([a1, a2, a3, b1, b2, b3]):
+for a, arg in enumerate([a1]):
     for j in tqdm(iterations):
         tscc1 = runSC(arg['opt'], args=arg, demand=demand[j])
         tscc.append(tscc1)
@@ -109,15 +109,16 @@ for a, arg in enumerate([a1, a2, a3, b1, b2, b3]):
     results.append([np.mean(tscc), np.std(tscc)])
     tscc = []
 
-df = pd.DataFrame(results, columns=["Mean", "SD"])
-print("\n", df)
+df = pd.DataFrame(results, columns=["Mean", "SD"]).astype(int)
+# print("\n", df)
 
-ought = [[425340, 13316],
+ought = [[425340, 13316]]
+"""
          [634072, 21369],
          [364930, 12194],
          [493501, 16069],
          [719423, 24660],
-         [406393, 14161]]
+         [406393, 14161]]"""
 
 
 ough_df = pd.DataFrame(ought, columns=["Mean", "SD"]).astype(int)
@@ -125,5 +126,7 @@ ough_df = pd.DataFrame(ought, columns=["Mean", "SD"]).astype(int)
 delta_perc = np.round((df/pd.DataFrame(ought, columns=["Mean", "SD"]) - 1), 4)
 
 delta_abs = (df - pd.DataFrame(ought, columns=["Mean", "SD"])).astype(int)
+
+print("\n", df, "\n", delta_perc, "\n", delta_abs)
 
 int(0)
