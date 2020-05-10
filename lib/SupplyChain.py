@@ -5,7 +5,7 @@ class Agent:
 
     def __init__(self, no, basestock, rlt, hcs, scs):
         self.no = no
-        self.T = 1400
+        self.T = 1200
         self.basestock = basestock
         self.rlt = rlt
         self.holdingcost_rate = hcs
@@ -23,8 +23,7 @@ class SupplyChain:
 
     def __init__(self, agents, demand):
         self.agents = agents
-        self.N = len(self.agents)
-        self.T = 1400
+        self.T = 1200
         self.demand = demand
         self.scc = [0] * self.T
         self.tscc = 0
@@ -93,7 +92,7 @@ class SupplyChain:
             # 7 calculate supply chain contexts
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
 
-        self.tscc = np.array(self.scc[200:]).cumsum()[-1]
+        self.tscc = np.array(self.scc[0:]).cumsum()[-1]
 
 
 def returnTSCC(chromosome):
@@ -107,7 +106,7 @@ def runSC(chromosome, args, **kwargs):
     rlt = args['rlt']
     hcs = args['hcs']
     scs = args['scs']
-    demand = kwargs.get('demand', np.random.randint(20, 61, 1400))
+    demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
     for i, chrom in enumerate(chromosome):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i]))
 
