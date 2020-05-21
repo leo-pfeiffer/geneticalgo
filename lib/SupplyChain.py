@@ -3,10 +3,11 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, no, basestock, rlt, hcs, scs):
+    def __init__(self, no, basestock, ilt, rlt, hcs, scs):
         self.no = no
         self.T = 1200
         self.basestock = basestock
+        self.ilt = ilt
         self.rlt = rlt
         self.holdingcost_rate = hcs
         self.shortagecost_rate = scs
