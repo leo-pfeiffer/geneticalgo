@@ -3,6 +3,7 @@ from SimpleGA.SimpleGenAlg import SimpleGenAlg
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from SimpleGA.FitnessFunctions import multimodal
 
 args = {"lower": -10,
@@ -17,8 +18,13 @@ y_values = [y[1] for y in GA.search]
 
 chrom = GA.search[-1]
 fitness = GA.fitness[-1]
+fitness_history = GA.fitness
 
-plt.scatter(x_values, y_values)
+# plt.scatter(x_values, y_values)
+
+df = pd.DataFrame([x_values, y_values, fitness_history]).T
+df.columns = ["x", "y", "fitness"]
+df.plot()
 plt.show()
 
 int(0)

@@ -56,9 +56,9 @@ class GenAlg:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
-            else:
-                self.int_pop = self.pool[i*2:(i*2+1)]
+                self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
+            else:   # doublechek += in lines above and below
+                self.int_pop += self.pool[i*2:(i*2+1)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):

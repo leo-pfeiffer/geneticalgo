@@ -1,7 +1,8 @@
 import numpy as np
 from operator import attrgetter
 from tqdm import tqdm
-from random import uniform
+from random import uniform, shuffle
+from copy import copy
 
 from SimpleGA.FitnessFunctions import multimodal
 
@@ -28,7 +29,7 @@ class SimpleGenAlg:
         pbar = tqdm(maxGen)
         while self.no_gen < maxGen:
             self.no_gen += 1
-            self.selection()
+            # self.selection()
             self.crossover()
             self.mutation()
             self.survival()
@@ -37,8 +38,9 @@ class SimpleGenAlg:
             self.search.append(self.par_pop[0].chromosome)  # save best chromosome
             pbar.update(1)
 
+    """
     def selection(self):
-        """Select chromosomes for mating pool"""
+        # Select chromosomes for mating pool -> crossover
         fks = [1 / (1 + chrom.fitness) for chrom in self.par_pop]
         sumfk = sum(fks)
         probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
@@ -51,17 +53,16 @@ class SimpleGenAlg:
                 self.pool.append(cn)
 
         self.pool = [self.par_pop[i] for i in self.pool]
+    """
 
     def crossover(self):
-        u = np.random.uniform(0, 1)
+        self.pool = copy(self.par_pop)
+        shuffle(self.pool)
         for i in range(int(np.ceil(self.n/2))):
-            if u <= self.cr:
-                cut = np.random.randint(1, self.l)
-                cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
-                cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [Chrom(genes=cross1, args=self.args, l=self.l), Chrom(genes=cross2, args=self.args, l=self.l)]
-            else:
-                self.int_pop = self.pool[i*2:(i*2+1)]
+            cut = np.random.randint(1, self.l)
+            cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
+            cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
+            self.int_pop += [Chrom(genes=cross1, args=self.args, l=self.l), Chrom(genes=cross2, args=self.args, l=self.l)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):
@@ -73,12 +74,23 @@ class SimpleGenAlg:
                 else:
                     newGenes.append(gene)
             self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args, l=self.l)
+            self.int_pop[c].evaluate()
 
     def survival(self):
-        for chrom in self.int_pop:
-            chrom.evaluate()
+        """Roulette wheel selection"""
+        pool = self.int_pop + self.par_pop
+        fks = [1 / (1 + chrom.fitness) for chrom in pool]
+        sumfk = sum(fks)
+        probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
 
-        self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('fitness'))[:self.n]
+        new_par = [next(chrom for chrom, val in enumerate(probabilities) if val >= np.random.uniform(0, 1))]
+        while len(new_par) < self.n:
+            r = np.random.uniform(0, 1)
+            cn = next(chrom for chrom, val in enumerate(probabilities) if val >= r)
+            if cn not in new_par:
+                new_par.append(cn)
+
+        self.par_pop = [pool[i] for i in new_par]
 
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
