@@ -16,7 +16,7 @@ class SimpleGenAlg:
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
-        self.mr = 0.1  # mutation rate (probability)
+        self.mr = 0.7  # mutation rate (probability)
         self.x = 0.2  # parameter for mutation
         self.no_gen = 0
         self.fitness = []  # save fitness of each generation for analysis
@@ -37,23 +37,6 @@ class SimpleGenAlg:
             self.fitness.append(self.par_pop[0].fitness)  # save fitness of current iteration
             self.search.append(self.par_pop[0].chromosome)  # save best chromosome
             pbar.update(1)
-
-    """
-    def selection(self):
-        # Select chromosomes for mating pool -> crossover
-        fks = [1 / (1 + chrom.fitness) for chrom in self.par_pop]
-        sumfk = sum(fks)
-        probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
-
-        self.pool = [next(chrom for chrom, val in enumerate(probabilities) if val >= np.random.uniform(0, 1))]
-        while len(self.pool) < self.n:
-            r = np.random.uniform(0, 1)
-            cn = next(chrom for chrom, val in enumerate(probabilities) if val >= r)
-            if cn not in self.pool:
-                self.pool.append(cn)
-
-        self.pool = [self.par_pop[i] for i in self.pool]
-    """
 
     def crossover(self):
         self.pool = copy(self.par_pop)
@@ -76,10 +59,10 @@ class SimpleGenAlg:
             self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args, l=self.l)
             self.int_pop[c].evaluate()
 
-    def survival(self):
+    def survival2(self):
         """Roulette wheel selection"""
         pool = self.int_pop + self.par_pop
-        fks = [1 / (1 + chrom.fitness) for chrom in pool]
+        fks = [chrom.fitness for chrom in pool]
         sumfk = sum(fks)
         probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
 
@@ -91,6 +74,15 @@ class SimpleGenAlg:
                 new_par.append(cn)
 
         self.par_pop = [pool[i] for i in new_par]
+
+        for i, chrom in enumerate(self.par_pop):
+            chrom.no = self.no_gen + i
+
+    def survival(self):
+        """elitist selection"""
+        pool = self.int_pop + self.par_pop
+
+        self.par_pop = sorted(pool, key=attrgetter('fitness'))[:self.n]
 
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i

@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 from SimpleGA.FitnessFunctions import multimodal
 
-args = {"lower": -10,
-        "upper": 10}
+args = {"lower": -30,
+        "upper": 30}
 
-max_gen = 1000
+max_gen = 200
 GA = SimpleGenAlg(args=args)
 GA.runAlgorithm(maxGen=max_gen)
 
