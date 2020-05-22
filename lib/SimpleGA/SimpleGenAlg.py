@@ -8,7 +8,7 @@ from SimpleGA.FitnessFunctions import multimodal
 
 
 class SimpleGenAlg:
-    def __init__(self, args):
+    def __init__(self, args, m):
         self.args = args
         self.n = 4  # number of chromosomes (= pop_size); fixed
         self.l = 2  # length of chromosomes (=agents in supply chain)
@@ -16,7 +16,7 @@ class SimpleGenAlg:
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
-        self.mr = 0.7  # mutation rate (probability)
+        self.mr = m  # mutation rate (probability) default 0.7
         self.x = 0.2  # parameter for mutation
         self.no_gen = 0
         self.fitness = []  # save fitness of each generation for analysis

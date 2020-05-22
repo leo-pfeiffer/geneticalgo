@@ -6,25 +6,25 @@ import numpy as np
 import pandas as pd
 from SimpleGA.FitnessFunctions import multimodal
 
-args = {"lower": -30,
-        "upper": 30}
+mrs = np.arange(0.05, 1, 0.05).tolist()
+space = np.arange(5, 51, 5).tolist()
+simulations = 1000
 
-max_gen = 200
-GA = SimpleGenAlg(args=args)
-GA.runAlgorithm(maxGen=max_gen)
+for m in mrs:
+    for s in space:
+        for i in simulations:
+            args = {"lower": -s,
+                    "upper": s}
+            max_gen = 50
+            GA = SimpleGenAlg(args=args, m=m)
+            GA.runAlgorithm(maxGen=max_gen)
 
-x_values = [x[0] for x in GA.search]
-y_values = [y[1] for y in GA.search]
+            x_values = [x[0] for x in GA.search]
+            y_values = [y[1] for y in GA.search]
 
-chrom = GA.search[-1]
-fitness = GA.fitness[-1]
-fitness_history = GA.fitness
+            fitness_history = GA.fitness
 
-# plt.scatter(x_values, y_values)
-
-df = pd.DataFrame([x_values, y_values, fitness_history]).T
-df.columns = ["x", "y", "fitness"]
-df.plot()
-plt.show()
+            df = pd.DataFrame([[m] * max_gen, [s] * max_gen, x_values, y_values, fitness_history]).T
+            df.columns = ["x", "y", "fitness"]
 
 int(0)
