@@ -8,11 +8,16 @@ import pandas as pd
 from SimpleGA.FitnessFunctions import multimodal
 
 # mrs = np.arange(0.05, 1, 0.05).tolist()
-mrs = np.arange(0.05, 1, 0.1).tolist()
-space = np.arange(5, 21, 5).tolist()
-simulations = 10
+mrs = np.arange(0.05, 1, 0.01).tolist()
+space = np.arange(5, 51, 1).tolist()
+simulations = 1000
 delta = 0.1
 df = pd.DataFrame()
+labels = ["No optimum found",
+          r'$s_1$',
+          r'$s_2$',
+          r'$s_3$',
+          r'$s_4$']
 
 
 def binner(x, delta):
@@ -23,7 +28,6 @@ def binner(x, delta):
     min2 = multimodal([-v1, v1])
     min3 = multimodal([-v2, -v2])
     min4 = multimodal([v2, v2])
-    locmax = multimodal([0, 0])
 
     if abs(x - min1)/min1 <= delta:
         return 1
@@ -33,8 +37,6 @@ def binner(x, delta):
         return 3
     elif abs(x - min4)/min4 <= delta:
         return 4
-    elif abs(x - locmax)/locmax <= delta:
-        return 5
     else:
         return 0
 
@@ -42,14 +44,15 @@ def binner(x, delta):
 def analyseSimulation(**kwargs):
     df = kwargs.get('df')
     simulations = kwargs.get('simulations')
-    data = pd.DataFrame(columns=[0, 1, 2, 3, 4, 5])
+    data = pd.DataFrame(columns=[0, 1, 2, 3, 4])
     params = []
-    for m in mrs:
+    #for m in mrs:
+    for m in [0.72]:
+        #for s in space:
         for s in space:
             params.append((m, s))
             freq = df[(df.MR == m) & (df.Search == s)].Bin.value_counts()/simulations
             data = data.append(freq.to_dict(), ignore_index=True).fillna(0)
-            chance = data[data[2] > 0.5]
 
     index = data[data[2] > 0.5].index
     for i in index:
@@ -61,9 +64,11 @@ def analyseSimulation(**kwargs):
 
 
 if __name__ == "__main__":
-    pbar = tqdm(len(mrs))
-    for m in mrs:
+    pbar = tqdm(len(space))
+    #for m in mrs:
+    for m in [0.72]:
         for s in space:
+        #for s in [10]:
             for i in range(simulations):
                 args = {"lower": -s,
                         "upper": s}
@@ -76,12 +81,23 @@ if __name__ == "__main__":
                 y = GA.search[-1][1]
                 data = {'MR': m, 'Search': s, 'Sim': i, 'Bin': b, 'x': x, 'y': y, 'fitness': fitness}
                 df = df.append(data, ignore_index=True)
-        pbar.update(1)
+            pbar.update(1)
 
     # df.to_csv("SimulationResults.csv")
     data = analyseSimulation(df=df, simulations=simulations)
-    int(0)
-
+    data.index = space
+    data.to_csv("Solutions_MR072.csv", index=True, index_label="MR")
+    sss = [r'$[{}, {}]$'.format(-x, x) for x in space if x%5==0]
+    plt.figure(figsize=(8, 4), dpi=300)
+    plt.stackplot(space, data.loc[:, 0], data.loc[:, 1], data.loc[:, 2], data.loc[:, 3], data.loc[:, 4],
+                  labels=labels)
+    plt.legend(loc="upper left")
+    plt.xticks(ticks=[x for x in space if x%5==0], labels=sss)
+    plt.xlabel("Search space")
+    plt.ylabel("Relative Frequency of Solution")
+    plt.margins(0,0)
+    plt.show()
+    plt.savefig("Solutions_MR072.png")
 
 # x_values = [x[0] for x in GA.search]
 # y_values = [y[1] for y in GA.search]
