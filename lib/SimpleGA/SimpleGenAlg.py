@@ -26,7 +26,8 @@ class SimpleGenAlg:
             chrom.evaluate()
 
     def runAlgorithm(self, maxGen):
-        pbar = tqdm(maxGen)
+        if __name__ == '__main__':
+            pbar = tqdm(maxGen)
         while self.no_gen < maxGen:
             self.no_gen += 1
             # self.selection()
@@ -36,7 +37,9 @@ class SimpleGenAlg:
 
             self.fitness.append(self.par_pop[0].fitness)  # save fitness of current iteration
             self.search.append(self.par_pop[0].chromosome)  # save best chromosome
-            pbar.update(1)
+
+            if __name__ == '__main__':
+                pbar.update(1)
 
     def crossover(self):
         self.pool = copy(self.par_pop)
