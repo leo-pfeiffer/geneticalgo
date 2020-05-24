@@ -7,6 +7,8 @@ a1 = {
     'hcs': np.array([8, 4, 2, 1]),
     'scs': np.array([24, 12, 6, 3]),
     'rlt': np.array([1, 3, 5, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [52, 143, 230, 183],
     'ought': [425340, 13316]
 }
@@ -15,6 +17,8 @@ a2 = {
     'hcs': np.array([8, 6, 4, 2]),
     'scs': np.array([32, 21, 12, 4]),
     'rlt': np.array([1, 3, 5, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [54, 144, 229, 179],
     'ought': [634072, 21369]
 }
@@ -23,6 +27,8 @@ a3 = {
     'hcs': np.array([5, 4, 3, 1]),
     'scs': np.array([10, 8, 6, 2]),
     'rlt': np.array([1, 3, 5, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [50, 138, 223, 180],
     'ought': [364930, 12194]
 }
@@ -31,6 +37,8 @@ b1 = {
     'hcs': np.array([8, 4, 2, 1]),
     'scs': np.array([24, 12, 6, 3]),
     'rlt': np.array([2, 3, 6, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [95, 142, 273, 182],
     'ought': [493501, 16069]
 }
@@ -39,6 +47,8 @@ b2 = {
     'hcs': np.array([8, 6, 4, 2]),
     'scs': np.array([32, 21, 12, 4]),
     'rlt': np.array([2, 3, 6, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [98, 143, 272, 179],
     'ought': [719423, 24660]
 }
@@ -47,6 +57,8 @@ b3 = {
     'hcs': np.array([5, 4, 3, 1]),
     'scs': np.array([10, 8, 6, 2]),
     'rlt': np.array([2, 3, 6, 4]),
+    'ilt': np.array([0, 0, 0, 0]),
+    'RMSilt': 0,
     'opt': [91, 138, 265, 180],
     'ought': [406393, 14161]
 }

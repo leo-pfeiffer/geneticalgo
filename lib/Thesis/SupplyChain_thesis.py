@@ -3,11 +3,12 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, no, basestock, ilt, rlt, hcs, scs):
+    def __init__(self, no, basestock, ilt, rlt, RMSilt, hcs, scs):
         self.no = no
         self.T = 1200
         self.basestock = basestock
         self.ilt = ilt
+        self.RMSilt = RMSilt
         self.rlt = rlt
         self.holdingcost_rate = hcs
         self.shortagecost_rate = scs
@@ -16,7 +17,7 @@ class Agent:
         self.onHandInventory = basestock
         self.onOrderInventory = 0
         self.backlog = 0
-        self.order = 0  # order from downstream
+        self.order = [0] * int(np.floor(self.T * 1.5))  # order from downstream
         self.receive = [0] * int(np.floor(self.T * 1.5))  # received from upstream; account for schedule beyond T
 
 
@@ -60,30 +61,34 @@ class SupplyChain:
 
                 # 3 agents receive demand/order quantity from immediate downstream member
                 if agent.no == 0:
-                    agent.order = self.demand[t]
+                    agent.order[t] = self.demand[t]  # in theory: self.demand[t - agent.ilt] but this is equivalent
 
                 # 4
                 # send order to upstream -> received immediately
                 # calculate end of period onHandInventory
-                shipment = min(agent.order, agent.onHandInventory)
-                agent.onHandInventory -= shipment
-                agent.backlog += agent.order - shipment
-
-                orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
-
-                # orders are received immediately
-                if agent.no != 3:
-                    upstream.order = orderQuantity
-                else:
-                    # supplier receives order from infinite source after rlt
-                    agent.receive[t + agent.rlt] += orderQuantity
+                shipment = min(agent.order[t], agent.onHandInventory)
 
                 # 5
                 # order fulfillment. demand/order of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
                 if agent.no != 0:
                     downstream.receive[t + downstream.rlt] += shipment
-                    # customer receives shipment immediately
+                    # customer shipment neglected
+
+                #####
+                agent.onHandInventory -= shipment
+                agent.backlog += agent.order[t] - shipment
+
+                orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
+
+                # orders are received in t + ILT
+                if agent.no != 3:
+                    upstream.order[t + upstream.ilt] = orderQuantity
+                else:
+                    # supplier receives order from infinite source after rlt + ILT
+                    agent.receive[t + agent.rlt + agent.RMSilt] += orderQuantity
+
+
 
                 # 6 update inventory and calculate local costs
                 agent.onOrderInventory += orderQuantity
@@ -107,9 +112,11 @@ def runSC(chromosome, args, **kwargs):
     rlt = args['rlt']
     hcs = args['hcs']
     scs = args['scs']
+    ilt = args['ilt']
+    RMSilt = args['RMSilt']
     demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
     for i, chrom in enumerate(chromosome):
-        agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], scs=scs[i]))
+        agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
 
     S = SupplyChain(agents=agents, demand=demand)
     S.simulate()

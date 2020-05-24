@@ -44,7 +44,6 @@ ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 plt.show()
 """
 
-
 # Run SC only with given base-stock
 
 # Setup random sampling:
