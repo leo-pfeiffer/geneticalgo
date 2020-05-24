@@ -1,9 +1,9 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-from SCsettings import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
+from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 from tqdm import tqdm
-from SupplyChain import runSC
+from Thesis.SupplyChain_thesis import runSC
 import time
 
 n_it = 1000

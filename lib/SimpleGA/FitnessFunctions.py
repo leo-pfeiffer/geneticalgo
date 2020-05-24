@@ -59,5 +59,6 @@ def plot3d(function, xinterval, yinterval):
 
     plt.show()
 
-plot3d(multimodal, [-3, 3], [-3, 3])
 
+if __name__ == "__main__":
+    plot3d(multimodal, [-3, 3], [-3, 3])
