@@ -75,7 +75,6 @@ class SupplyChain:
                     downstream.receive[t + downstream.rlt] += shipment
                     # customer shipment neglected
 
-                #####
                 agent.onHandInventory -= shipment
                 agent.backlog += agent.order[t] - shipment
 
