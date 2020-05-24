@@ -42,6 +42,7 @@ ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
 # plt.savefig("Report.png")
 plt.show()
+
 """
 
 
@@ -77,3 +78,4 @@ for a, arg in enumerate([a1]):
 elapsed = time.time() - start
 
 df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
+#"""

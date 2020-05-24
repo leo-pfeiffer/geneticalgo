@@ -8,17 +8,23 @@ from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandS
 import time
 
 
-"""
 # Choose the desired setting
-args = a3
+args = a1
+
+n_it = 10
+T = 1200
+lower = 20
+upper = 60
+
+demand = demandSample(T, lower, upper, n_it, antithetic=True)
 
 tscc = []
-max_gen = 500
+max_gen = 100
 chromosomes = []
-iterations = [*range(30)]
+iterations = [*range(n_it)]
 
 for i in tqdm(iterations):
-    GA = GenAlg(args=args)
+    GA = GenAlg(args=args, demand=demand[i])
     GA.runAlgorithm(maxGen=max_gen)
     tscc.append(GA.tscc)
     chromosomes.append(GA.par_pop[0].chromosome)
@@ -42,8 +48,9 @@ ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
 # plt.savefig("Report.png")
 plt.show()
-"""
 
+
+"""
 # Run SC only with given base-stock
 
 # Setup random sampling:
@@ -75,4 +82,4 @@ for a, arg in enumerate([a1]):
 
 elapsed = time.time() - start
 
-df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
+df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)"""

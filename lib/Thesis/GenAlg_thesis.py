@@ -2,10 +2,11 @@ import numpy as np
 from operator import attrgetter
 from Thesis.SupplyChain_thesis import returnTSCC, runSC
 import matplotlib.pyplot as plt
+import time
 
 
 class GenAlg:
-    def __init__(self, args):
+    def __init__(self, args, demand):
         self.args = args
         self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
@@ -20,9 +21,12 @@ class GenAlg:
         self.rlt = args['rlt']
         self.hcs = args['hcs']
         self.scs = args['scs']
+        self.ilt = args['ilt']
+        self.RMSilt = args['RMSilt']
+        self.demand = demand
 
         for chrom in self.par_pop:
-            chrom.evaluate()
+            chrom.evaluate(self.demand)
 
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
@@ -56,9 +60,9 @@ class GenAlg:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
-            else:   # doublechek += in lines above and below
-                self.int_pop += self.pool[i*2:(i*2+1)]
+                self.int_pop = [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
+            else:
+                self.int_pop = self.pool[i*2:(i*2+1)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):
@@ -73,7 +77,7 @@ class GenAlg:
 
     def survival(self):
         for chrom in self.int_pop:
-            chrom.evaluate()
+            chrom.evaluate(self.demand)
 
         self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('tscc'))[:self.n]
 
@@ -101,7 +105,7 @@ class Chrom:
         upper = self.upperU * self.maxRLT
         return np.array([np.random.randint(l, u + 1) for l, u in zip(lower, upper)])
 
-    def evaluate(self):
+    def evaluate(self, demand):
         """Run the SC model and evaluate TSCC"""
         # self.tscc = returnTSCC(self.chromosome)
-        self.tscc = runSC(self.chromosome, args=self.args)
+        self.tscc = runSC(self.chromosome, args=self.args, demand=demand)
