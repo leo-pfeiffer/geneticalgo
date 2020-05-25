@@ -14,7 +14,7 @@ class GenAlg:
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
         self.mr = 0.1  # mutation rate (probability)
-        self.x = 0.2  # parameter for mutation
+        self.x = 0.2  # strength of mutation: [(1-x)*s; (1+x)*s]
         self.no_gen = 0
         self.tscc = []  # save tscc of each generation for analysis
         self.rlt = args['rlt']
@@ -35,7 +35,7 @@ class GenAlg:
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def selection(self):
-        """Select chromosomes for mating pool"""
+        """Roulette crossover for mating pool"""
         fks = [1 / (1 + chrom.tscc) for chrom in self.par_pop]
         sumfk = sum(fks)
         probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
@@ -51,14 +51,15 @@ class GenAlg:
 
     def crossover(self):
         u = np.random.uniform(0, 1)
+        self.int_pop = []
         for i in range(int(np.ceil(self.n/2))):
             if u <= self.cr:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
-            else:   # doublechek += in lines above and below
-                self.int_pop = self.pool[i*2:(i*2+1)]
+                self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
+            else:
+                self.int_pop += self.pool[i*2:(i*2+1)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):

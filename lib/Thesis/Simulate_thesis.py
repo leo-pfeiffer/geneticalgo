@@ -11,7 +11,7 @@ import time
 # Choose the desired setting
 args = a1
 
-n_it = 10
+n_it = 30
 T = 1200
 lower = 20
 upper = 60
@@ -19,7 +19,7 @@ upper = 60
 demand = demandSample(T, lower, upper, n_it, antithetic=True)
 
 tscc = []
-max_gen = 100
+max_gen = 500
 chromosomes = []
 iterations = [*range(n_it)]
 

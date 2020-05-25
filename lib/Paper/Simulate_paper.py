@@ -8,12 +8,12 @@ from Paper.SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSam
 import time
 
 
-"""
+#"""
 # Choose the desired setting
-args = a3
+args = a1
 
 tscc = []
-max_gen = 500
+max_gen = 40
 chromosomes = []
 iterations = [*range(30)]
 
@@ -35,8 +35,8 @@ ax.set_ylabel("TSCC")
 ax.set_xlabel("Generation number")
 
 best_chrom = chromosomes[np.argmin([x[-1] for x in tscc])].tolist()
-text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, Supplier: {}"
-text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3])
+text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, Supplier: {}\nTSCC: {}"
+text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3], avg_tscc[-1])
 
 ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
@@ -78,4 +78,4 @@ for a, arg in enumerate([a1]):
 elapsed = time.time() - start
 
 df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
-#"""
+"""

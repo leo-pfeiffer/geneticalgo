@@ -1,5 +1,7 @@
 import numpy as np
 from operator import attrgetter
+from copy import copy
+from random import shuffle
 from Thesis.SupplyChain_thesis import returnTSCC, runSC
 import matplotlib.pyplot as plt
 import time
@@ -15,7 +17,7 @@ class GenAlg:
         self.pool = []  # mating pool; changes every iteration
         self.cr = 0.7  # crossover rate (probability)
         self.mr = 0.1  # mutation rate (probability)
-        self.x = 0.2  # parameter for mutation
+        self.x = 0.2  # strength of mutation: [(1-x)*s; (1+x)*s]
         self.no_gen = 0
         self.tscc = []  # save tscc of each generation for analysis
         self.rlt = args['rlt']
@@ -31,15 +33,15 @@ class GenAlg:
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
             self.no_gen += 1
-            self.selection()
-            self.crossover()
+            # self.random_crossover()
+            self.roulette_crossover()
             self.mutation()
-            self.survival()
-
+            self.evaluation()
+            # self.wheel_selection()
+            self.elite_selection()
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
-    def selection(self):
-        """Select chromosomes for mating pool"""
+    def roulette_crossover(self):
         fks = [1 / (1 + chrom.tscc) for chrom in self.par_pop]
         sumfk = sum(fks)
         probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
@@ -53,16 +55,31 @@ class GenAlg:
 
         self.pool = [self.par_pop[i] for i in self.pool]
 
-    def crossover(self):
         u = np.random.uniform(0, 1)
-        for i in range(int(np.ceil(self.n/2))):
+        self.int_pop = []
+        for i in range(int(np.ceil(self.n / 2))):
+            if u <= self.cr:
+                cut = np.random.randint(1, self.l)
+                cross1 = np.append(self.pool[i * 2].chromosome[:cut], self.pool[i * 2 + 1].chromosome[cut:])
+                cross2 = np.append(self.pool[i * 2 + 1].chromosome[:cut], self.pool[i * 2].chromosome[cut:])
+                self.int_pop += [Chrom(genes=cross1, args=self.args, l=self.l),
+                                 Chrom(genes=cross2, args=self.args, l=self.l)]
+            else:
+                self.int_pop += self.pool[i*2:(i*2+1)]
+
+    def random_crossover(self):
+        self.pool = copy(self.par_pop)
+        shuffle(self.pool)
+        self.int_pop = []
+        u = np.random.uniform(0, 1)
+        for i in range(int(np.ceil(self.n / 2))):
             if u <= self.cr:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
                 cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
-                self.int_pop = [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
+                self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
             else:
-                self.int_pop = self.pool[i*2:(i*2+1)]
+                self.int_pop += self.pool[i*2:(i*2+1)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):
@@ -75,10 +92,33 @@ class GenAlg:
                     newGenes.append(gene)
             self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
 
-    def survival(self):
+    def evaluation(self):
         for chrom in self.int_pop:
             chrom.evaluate(self.demand)
 
+    def wheel_selection(self):
+        """Roulette wheel selection"""
+        pool = self.int_pop + self.par_pop
+        fks = [1 / (1 + chrom.tscc) for chrom in pool]
+        sumfk = sum(fks)
+        probabilities = np.array([fk / sumfk for fk in fks]).cumsum()
+
+        self.pool = [next(chrom for chrom, val in enumerate(probabilities) if val >= np.random.uniform(0, 1))]
+        while len(self.pool) < self.n:
+            r = np.random.uniform(0, 1)
+            cn = next(chrom for chrom, val in enumerate(probabilities) if val >= r)
+            if cn not in self.pool:
+                self.pool.append(cn)
+
+        self.par_pop = [pool[i] for i in self.pool]
+
+        self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('tscc'))[:self.n]
+
+        for i, chrom in enumerate(self.par_pop):
+            chrom.no = self.no_gen + i
+
+    def elite_selection(self):
+        """Elitist selection"""
         self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('tscc'))[:self.n]
 
         for i, chrom in enumerate(self.par_pop):
@@ -90,7 +130,7 @@ class Chrom:
     def __init__(self, **kwargs):
         self.args = kwargs.get('args')
         self.no = kwargs.get('no', -999)
-        self.minRLT = self.args['rlt']    # make this variable
+        self.minRLT = self.args['rlt']  # make this variable
         self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
         self.lowerU = 20
         self.upperU = 60

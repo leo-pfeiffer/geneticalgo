@@ -1,19 +1,19 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 from Thesis.GenAlg_thesis import GenAlg
 from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 from tqdm import tqdm
 from Thesis.SupplyChain_thesis import runSC
 import time
 
-n_it = 15
+n_it = 30
 T = 1200
 lower = 20
 upper = 60
 tasks = 6
-max_gen = 300
+max_gen = 40
 chromosomes = []
 
 demand = demandSample(T, lower, upper, n_it, antithetic=True)
@@ -43,7 +43,7 @@ def ga_process(its, demand, arg):
         GA.runAlgorithm(maxGen=max_gen)
         tscc.append(GA.tscc)
         chromosomes.append(GA.par_pop[0].chromosome)
-    return tscc
+    return chromosomes, tscc
 
 
 def ga_process_wrapper(args):
@@ -71,9 +71,22 @@ with concurrent.futures.ProcessPoolExecutor() as executor:
             chromosomes += ret[0]
             tscc += ret[1]
 
-elapsed = time.time() - start
+avg_tscc = np.mean(tscc, axis=0)
+sd_tscc = np.std(tscc, axis=0)
 
-results.append([np.mean(tscc), np.std(tscc)])
-ought.append(arg['ought'])
+# pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv("Report.csv")
 
-df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
+fig = plt.figure()
+ax = fig.add_subplot(1, 1, 1)
+ax.plot([*range(max_gen)], avg_tscc)[0]
+ax.set_ylabel("TSCC")
+ax.set_xlabel("Generation number")
+
+best_chrom = chromosomes[np.argmin([x[-1] for x in tscc])].tolist()
+text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, Supplier: {}\nTSCC: {}"
+text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3], avg_tscc[-1])
+
+ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
+
+# plt.savefig("Report.png")
+plt.show()
