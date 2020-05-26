@@ -71,8 +71,8 @@ class GenAlg:
         self.pool = copy(self.par_pop)
         shuffle(self.pool)
         self.int_pop = []
-        u = np.random.uniform(0, 1)
         for i in range(int(np.ceil(self.n / 2))):
+            u = np.random.uniform(0, 1)
             if u <= self.cr:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
@@ -112,8 +112,6 @@ class GenAlg:
 
         self.par_pop = [pool[i] for i in self.pool]
 
-        self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('tscc'))[:self.n]
-
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
 
@@ -130,7 +128,7 @@ class Chrom:
     def __init__(self, **kwargs):
         self.args = kwargs.get('args')
         self.no = kwargs.get('no', -999)
-        self.minRLT = self.args['rlt']  # make this variable
+        self.minRLT = np.array(self.args['rlt']) + np.array(self.args['ilt'][1:].tolist() + [self.args['RMSilt']])
         self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
         self.lowerU = 20
         self.upperU = 60

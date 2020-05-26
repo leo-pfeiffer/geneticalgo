@@ -1,0 +1,59 @@
+import numpy as np
+from random import randint
+from Thesis.SupplyChain_thesis import runSC
+import matplotlib.pyplot as plt
+
+
+class RandomSearch:
+    def __init__(self, args, demand):
+        self.args = args
+        self.l = 4  # length of chromosomes (=agents in supply chain)
+        self.tscc = []  # save tscc of each generation for analysis
+        self.no_gen = 0
+        self.a = 0.1   # relative search radius
+
+        self.rlt = args['rlt']
+        self.hcs = args['hcs']
+        self.scs = args['scs']
+        self.ilt = args['ilt']
+        self.RMSilt = args['RMSilt']
+        self.demand = demand
+
+        self.minRLT = np.array(self.rlt) + np.array(self.ilt[1:].tolist() + [self.RMSilt])
+        self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
+        self.lowerU = 20
+        self.upperU = 60
+
+        self.hcs = self.args['hcs']
+        self.scs = self.args['scs']
+
+        self.parent = self.generateRandom()
+        self.par_tscc = runSC(self.parent, args=args, demand=self.demand)
+        self.child = []
+        self.child_tscc = np.inf
+
+    def runAlgorithm(self, maxGen):
+        while self.no_gen < maxGen:
+            self.no_gen += 1
+            self.alter()
+            self.evaluateChild()
+            self.selection()
+            self.tscc.append(self.par_tscc)  # save tscc of current iteration
+
+    def generateRandom(self):
+        """generate initial solution"""
+        lower = self.lowerU * self.minRLT
+        upper = self.upperU * self.maxRLT
+        return np.array([np.random.randint(l, u + 1) for l, u in zip(lower, upper)])
+
+    def alter(self):
+        upperX = [min(x*(1+self.a), self.maxRLT[i]) for i, x in self.parent]
+        lowerX = [max(x*(1-self.a), self.minRLT[i]) for i, x in self.parent]
+        self.child = [randint(lowerX[i], upperX[i]) for i, x in enumerate(self.par)]
+
+    def evaluateChild(self):
+        self.child_tscc = runSC(self.child, args=self.args, demand=self.demand)
+
+    def selection(self):
+        if self.child_tscc > self.par_tscc:
+            self.parent = self.child
