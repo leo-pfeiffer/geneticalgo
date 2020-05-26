@@ -7,7 +7,7 @@ from Thesis.SupplyChain_thesis import runSC
 from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 import time
 
-
+"""
 # Choose the desired setting
 args = a1
 
@@ -51,11 +51,12 @@ plt.show()
 
 
 """
+"""
 # Run SC only with given base-stock
 
 # Setup random sampling:
 
-n_it = 1000
+n_it = 100
 T = 1200
 lower = 20
 upper = 60
@@ -82,4 +83,20 @@ for a, arg in enumerate([a1]):
 
 elapsed = time.time() - start
 
-df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)"""
+df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
+"""
+
+aa, bb, cc, dd, ee = 0, 0, 0, 0, 0
+
+for i in range(1000):
+    args = a1
+    demand = np.random.randint(20, 61, 1200).tolist()
+    tscc, a, b, c, d, e = runSC(args['opt'], args=args, demand=demand)
+    aa += a
+    bb += b
+    cc += c
+    dd += d
+    ee += e
+
+print("A", aa, "\nB", bb, "\nC", cc, "\nD", dd, "\nE", ee)
+int(0)
