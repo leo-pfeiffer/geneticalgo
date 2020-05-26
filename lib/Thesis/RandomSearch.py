@@ -24,6 +24,9 @@ class RandomSearch:
         self.lowerU = 20
         self.upperU = 60
 
+        self.LB = self.lowerU * self.minRLT
+        self.UB = self.upperU * self.maxRLT
+
         self.hcs = self.args['hcs']
         self.scs = self.args['scs']
 
@@ -42,14 +45,12 @@ class RandomSearch:
 
     def generateRandom(self):
         """generate initial solution"""
-        lower = self.lowerU * self.minRLT
-        upper = self.upperU * self.maxRLT
-        return np.array([np.random.randint(l, u + 1) for l, u in zip(lower, upper)])
+        return np.array([np.random.randint(l, u + 1) for l, u in zip(self.LB, self.UB)])
 
     def alter(self):
-        upperX = [min(x*(1+self.a), self.maxRLT[i]) for i, x in self.parent]
-        lowerX = [max(x*(1-self.a), self.minRLT[i]) for i, x in self.parent]
-        self.child = [randint(lowerX[i], upperX[i]) for i, x in enumerate(self.par)]
+        upperX = [int(min(x*(1+self.a), self.UB[i])) for i, x in enumerate(self.parent)]
+        lowerX = [int(max(x*(1-self.a), self.LB[i])) for i, x in enumerate(self.parent)]
+        self.child = [randint(lowerX[i], upperX[i]) for i, x in enumerate(self.parent)]
 
     def evaluateChild(self):
         self.child_tscc = runSC(self.child, args=self.args, demand=self.demand)
