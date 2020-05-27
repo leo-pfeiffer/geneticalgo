@@ -7,6 +7,7 @@ from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, dem
 from tqdm import tqdm
 from Thesis.SupplyChain_thesis import runSC
 import time
+import datetime
 
 n_it = 10
 T = 1200
@@ -68,7 +69,8 @@ for mx in mxs:
             elapsed = time.time() - start
 
             row = {"MX": mx, "MP": mp, "CR": cr, "TSCC": tscc}
-            print(elapsed, "\n", row)
+            print(elapsed, "\n", row, "\n")
+            print(datetime.datetime.now().strftime("%H:%M:%S"))
             results = results.append(row, ignore_index=True)
 
 results.to_csv("results_S1.csv", header=True, index=True)
