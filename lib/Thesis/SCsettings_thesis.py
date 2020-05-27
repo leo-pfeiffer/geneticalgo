@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-# Default parameters from the paper
+# Default parameters from Daniel & Rajendran paper
 
 a1 = {
     'hcs': np.array([8, 4, 2, 1]),
@@ -61,6 +61,40 @@ b3 = {
     'RMSilt': 0,
     'opt': [91, 138, 265, 180],
     'ought': [406393, 14161]
+}
+
+# Settings bachelor thesis
+
+s1 = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.array([2, 3, 4, 5]),
+    'ilt': np.array([1, 2, 3, 4]),
+    'RMSilt': 5
+}
+
+s2 = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.array([2, 4, 16, 32]),
+    'ilt': np.array([1, 3, 9, 18]),
+    'RMSilt': 24
+}
+
+s3 = {
+    'hcs': np.array([12, 8, 4, 1]),
+    'scs': np.array([24, 12, 6, 3]),
+    'rlt': np.array([2, 3, 4, 5]),
+    'ilt': np.array([1, 2, 3, 4]),
+    'RMSilt': 5
+}
+
+s4 = {
+    'hcs': np.array([12, 8, 4, 1]),
+    'scs': np.array([24, 12, 6, 3]),
+    'rlt': np.array([2, 4, 16, 32]),
+    'ilt': np.array([1, 3, 9, 18]),
+    'RMSilt': 24
 }
 
 

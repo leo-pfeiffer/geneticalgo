@@ -1,6 +1,4 @@
 import numpy as np
-from time import time
-
 
 class Agent:
 
@@ -32,14 +30,10 @@ class SupplyChain:
         self.tscc = 0
 
     def simulate(self):
-        a, b, c, d, e = 0, 0, 0, 0, 0
-
         for t in range(0, self.T):
 
             # update the order info from
             for i, agent in enumerate(self.agents):
-
-                ta = time()
 
                 # define upstream and downstream
                 if agent.no != 0:
@@ -50,9 +44,6 @@ class SupplyChain:
                 # 1 scheduled receipt of material at agent
                 agent.onHandInventory += agent.receive[t]
                 agent.onOrderInventory -= agent.receive[t]
-
-                a += time() - ta
-                tb = time()
 
                 # 2 backlog is filled as much as possible
                 if agent.backlog > 0:
@@ -66,9 +57,6 @@ class SupplyChain:
                     # update inventory information
                     agent.onHandInventory = max(agent.onHandInventory - agent.backlog, 0)
                     agent.backlog = newBacklog
-
-                b += time() - tb
-                tc = time()
 
                 # 3 agents receive demand/order quantity from immediate downstream member
                 if agent.no == 0:
@@ -89,9 +77,6 @@ class SupplyChain:
                 agent.onHandInventory -= shipment
                 agent.backlog += agent.order[t] - shipment
 
-                c += time() - tc
-                td = time()
-
                 orderQuantity = max(agent.basestock + agent.backlog - agent.onHandInventory - agent.onOrderInventory, 0)
 
                 # orders are received in t + ILT
@@ -101,22 +86,15 @@ class SupplyChain:
                     # supplier receives order from infinite source after rlt + ILT
                     agent.receive[t + agent.rlt + agent.RMSilt] += orderQuantity
 
-                d += time() - td
-                te = time()
-
                 # 6 update inventory and calculate local costs
                 agent.onOrderInventory += orderQuantity
                 agent.holdingcost_is = agent.holdingcost_rate * agent.onHandInventory
                 agent.shortagecost_is = agent.shortagecost_rate * agent.backlog
 
-                e += time() - te
-
             # 7 calculate supply chain contexts
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
 
         self.tscc = np.array(self.scc[0:]).cumsum()[-1]
-
-        return a, b, c, d, e
 
 
 def returnTSCC(chromosome):
@@ -125,7 +103,6 @@ def returnTSCC(chromosome):
 
 
 def runSC(chromosome, args, **kwargs):
-    # Initialise
 
     agents = []
     rlt = args['rlt']
@@ -138,7 +115,6 @@ def runSC(chromosome, args, **kwargs):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
 
     S = SupplyChain(agents=agents, demand=demand)
+    S.simulate()
 
-    a, b, c, d, e, = S.simulate()
-
-    return S.tscc, a, b, c, d, e
+    return S.tscc

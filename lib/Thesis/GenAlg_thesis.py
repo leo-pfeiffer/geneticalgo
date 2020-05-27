@@ -8,16 +8,16 @@ import time
 
 
 class GenAlg:
-    def __init__(self, args, demand):
+    def __init__(self, args, demand, **kwargs):
         self.args = args
         self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
         self.par_pop = [Chrom(no=i, args=args) for i in range(1, self.n + 1)]  # parent population
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
-        self.cr = 0.7  # crossover rate (probability)
-        self.mr = 0.1  # mutation rate (probability)
-        self.x = 0.2  # strength of mutation: [(1-x)*s; (1+x)*s]
+        self.cr = kwargs.get('cr', 0.7)  # crossover rate (probability)
+        self.mr = kwargs.get('mp', 0.1)  # mutation rate (probability)
+        self.x = kwargs.get('mx', 0.2)  # strength of mutation: [(1-x)*s; (1+x)*s]
         self.no_gen = 0
         self.tscc = []  # save tscc of each generation for analysis
         self.rlt = args['rlt']

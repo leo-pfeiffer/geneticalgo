@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from Thesis.GenAlg_thesis import GenAlg
-from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
+from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, demandSample, Output
 from tqdm import tqdm
 from Thesis.SupplyChain_thesis import runSC
 import time
@@ -13,7 +13,7 @@ T = 1200
 lower = 20
 upper = 60
 tasks = 6
-max_gen = 40
+max_gen = 30
 chromosomes = []
 
 demand = demandSample(T, lower, upper, n_it, antithetic=True)
@@ -50,7 +50,7 @@ def ga_process_wrapper(args):
     return ga_process(*args)
 
 
-arg = a1
+arg = s1
 geneticalgorithm = True
 start = time.time()
 
@@ -74,8 +74,12 @@ with concurrent.futures.ProcessPoolExecutor() as executor:
 avg_tscc = np.mean(tscc, axis=0)
 sd_tscc = np.std(tscc, axis=0)
 
-# pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv("Report.csv")
+tscc = avg_tscc[-1]
 
+
+
+# pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv("Report.csv")
+"""
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 ax.plot([*range(max_gen)], avg_tscc)[0]
@@ -89,4 +93,4 @@ text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3], a
 ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 
 # plt.savefig("Report.png")
-plt.show()
+plt.show()"""

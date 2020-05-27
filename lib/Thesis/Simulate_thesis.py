@@ -86,17 +86,20 @@ elapsed = time.time() - start
 df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
 """
 
-aa, bb, cc, dd, ee = 0, 0, 0, 0, 0
+aa, bb, cc, dd, ee, ss = 0, 0, 0, 0, 0, 0
 
 for i in range(1000):
     args = a1
     demand = np.random.randint(20, 61, 1200).tolist()
-    tscc, a, b, c, d, e = runSC(args['opt'], args=args, demand=demand)
+    tscc, a, b, c, d, e, s = runSC(args['opt'], args=args, demand=demand)
     aa += a
     bb += b
     cc += c
     dd += d
     ee += e
+    ss += s
 
-print("A", aa, "\nB", bb, "\nC", cc, "\nD", dd, "\nE", ee)
+s = aa + bb + cc + dd + ee
+
+print("A", aa, "\nB", bb, "\nC", cc, "\nD", dd, "\nE", ee, "\nOverhead", ss, "-", s)
 int(0)
