@@ -4,7 +4,7 @@ from tqdm import tqdm
 from random import uniform, shuffle
 from copy import copy
 
-from SimpleGA.FitnessFunctions import multimodal
+from SimpleGA.FitnessFunctions import multimodal, rosenbrock
 
 
 class SimpleGenAlg:
@@ -106,4 +106,4 @@ class Chrom:
 
     def evaluate(self):
         """Call fitness function"""
-        self.fitness = multimodal(self.chromosome)
+        self.fitness = rosenbrock(self.chromosome, a=1, b=100)

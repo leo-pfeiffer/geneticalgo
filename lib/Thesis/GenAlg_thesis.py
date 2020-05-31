@@ -2,7 +2,7 @@ import numpy as np
 from operator import attrgetter
 from copy import copy
 from random import shuffle
-from Thesis.SupplyChain_thesis import returnTSCC, runSC
+from SupplyChain_thesis import returnTSCC, runSC
 import matplotlib.pyplot as plt
 import time
 

@@ -9,8 +9,8 @@ from SimpleGA.FitnessFunctions import multimodal
 
 # mrs = np.arange(0.05, 1, 0.05).tolist()
 mrs = np.arange(0.05, 1, 0.01).tolist()
-space = np.arange(5, 51, 1).tolist()
-simulations = 1000
+space = np.arange(5, 11, 1).tolist()
+simulations = 25
 delta = 0.1
 df = pd.DataFrame()
 labels = ["No optimum found",
@@ -67,12 +67,12 @@ if __name__ == "__main__":
     pbar = tqdm(len(space))
     #for m in mrs:
     for m in [0.72]:
-        for s in space:
-        #for s in [10]:
+        #for s in space:
+        for s in [2.048]:
             for i in range(simulations):
                 args = {"lower": -s,
                         "upper": s}
-                max_gen = 25
+                max_gen = 100
                 GA = SimpleGenAlg(args=args, m=m)
                 GA.runAlgorithm(maxGen=max_gen)
                 fitness = GA.fitness[-1]
@@ -81,12 +81,16 @@ if __name__ == "__main__":
                 y = GA.search[-1][1]
                 data = {'MR': m, 'Search': s, 'Sim': i, 'Bin': b, 'x': x, 'y': y, 'fitness': fitness}
                 df = df.append(data, ignore_index=True)
-            pbar.update(1)
 
+                pbar.update(1)
+
+    df[["x", "y", "fitness"]].plot()
+    plt.show()
+    """
     # df.to_csv("SimulationResults.csv")
     data = analyseSimulation(df=df, simulations=simulations)
     data.index = space
-    data.to_csv("Solutions_MR072.csv", index=True, index_label="MR")
+    #data.to_csv("Solutions_MR072.csv", index=True, index_label="MR")
     sss = [r'$[{}, {}]$'.format(-x, x) for x in space if x%5==0]
     plt.figure(figsize=(8, 4), dpi=300)
     plt.stackplot(space, data.loc[:, 0], data.loc[:, 1], data.loc[:, 2], data.loc[:, 3], data.loc[:, 4],
@@ -97,7 +101,8 @@ if __name__ == "__main__":
     plt.ylabel("Relative Frequency of Solution")
     plt.margins(0,0)
     plt.show()
-    plt.savefig("Solutions_MR072.png")
+    #plt.savefig("Solutions_MR072.png")
+    """
 
 # x_values = [x[0] for x in GA.search]
 # y_values = [y[1] for y in GA.search]

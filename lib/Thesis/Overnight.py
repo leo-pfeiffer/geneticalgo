@@ -1,25 +1,23 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from Thesis.GenAlg_thesis import GenAlg
-from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, demandSample, Output
+from GenAlg_thesis import GenAlg
+from SCsettings_thesis import s1, s2, s3, s4, randomArgs, demandSample
 from tqdm import tqdm
-from Thesis.SupplyChain_thesis import runSC
 import time
 import datetime
 
-n_it = 10
+n_it = 30
 T = 1200
 lower = 20
 upper = 60
 tasks = 6
-max_gen = 10
+max_gen = 40
 chromosomes = []
 
 demand = demandSample(T, lower, upper, n_it, antithetic=True)
 
-results = pd.DataFrame(columns = ["MX", "MP", "CR", "TSCC"])
+results = pd.DataFrame(columns=["MX", "MP", "CR", "TSCC"])
 
 iterations = [*range(n_it)]
 
@@ -44,9 +42,8 @@ def ga_process_wrapper(args):
     return ga_process(*args)
 
 
-arg = s1
+arg = s4
 geneticalgorithm = True
-t0 = time.time()
 
 for mx in mxs:
     for mp in mps:
@@ -73,5 +70,4 @@ for mx in mxs:
             print(datetime.datetime.now().strftime("%H:%M:%S"))
             results = results.append(row, ignore_index=True)
 
-results.to_csv("results_S1.csv", header=True, index=True)
-
+results.to_csv("results_S4.csv", header=True, index=True)
