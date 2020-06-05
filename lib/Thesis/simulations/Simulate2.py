@@ -38,17 +38,17 @@ def simulate():
 
 
 def simulate2():
-    n_it = 8
+    n_it = 30
     T = 1200
     lower = 20
     upper = 60
-    tasks = 4
-    max_gen = 10
+    tasks = 6
+    max_gen = 200
     mx = 0.2
     mp = 0.7
     cr = 0.8
 
-    arg = s1
+    arg = s4
 
     demand = demandSample(T, lower, upper, n_it, antithetic=True)
     tscc = []
@@ -84,7 +84,8 @@ def ga_process_wrapper(args):
 
 
 def plot(tscc, chromosomes):
-    fig = plt.figure(figsize=(6, 4), dpi=300)
+    fig = plt.figure(figsize=(9, 6), dpi=300)
+    fig.tight_layout(pad=0.1)
     ax = fig.add_subplot(1, 1, 1)
     ax.plot([*range(len(tscc))], tscc.Mean.values.tolist())[0]
     ax.set_ylabel("TSCC")
@@ -97,8 +98,7 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("Report.png")
-    plt.show()
+    plt.savefig("s4.png")
 
 
 if __name__ == "__main__":
