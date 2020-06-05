@@ -1,6 +1,6 @@
 import numpy as np
 from random import randint
-from Thesis.SupplyChain_thesis import runSC
+from model.SupplyChain_thesis import runSC
 import matplotlib.pyplot as plt
 
 

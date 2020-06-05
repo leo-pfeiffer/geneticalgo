@@ -2,10 +2,10 @@ import concurrent.futures
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from Thesis.GenAlg_thesis import GenAlg
-from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, demandSample, Output
+from model.GenAlg_thesis import GenAlg
+from model.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, demandSample, Output
 from tqdm import tqdm
-from Thesis.SupplyChain_thesis import runSC
+from model.SupplyChain_thesis import runSC
 import time
 
 n_it = 30

@@ -1,10 +1,10 @@
 import time
-from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
+from model.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import numpy as np
-from Thesis.RandomSearch import RandomSearch
-from Thesis.SupplyChain_thesis import runSC
+from model.RandomSearch import RandomSearch
+from model.SupplyChain_thesis import runSC
 
 
 n_it = 2

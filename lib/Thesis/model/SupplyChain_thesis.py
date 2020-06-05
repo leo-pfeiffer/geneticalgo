@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class Agent:
 
     def __init__(self, no, basestock, ilt, rlt, RMSilt, hcs, scs):
@@ -103,7 +104,6 @@ def returnTSCC(chromosome):
 
 
 def runSC(chromosome, args, **kwargs):
-
     agents = []
     rlt = args['rlt']
     hcs = args['hcs']

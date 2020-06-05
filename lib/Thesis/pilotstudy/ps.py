@@ -46,5 +46,3 @@ plt.xlabel("Search space")
 plt.ylabel("Relative Frequency of Solution")
 plt.margins(0, 0)
 plt.show()
-
-int(0)

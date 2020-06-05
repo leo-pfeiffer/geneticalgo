@@ -2,9 +2,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from Thesis.GenAlg_thesis import GenAlg
-from Thesis.SupplyChain_thesis import runSC
-from Thesis.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample
+from model.GenAlg_thesis import GenAlg
+from model.SupplyChain_thesis import runSC
+from model.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample
 import time
 
 # Choose the desired setting

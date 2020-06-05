@@ -1,8 +1,8 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-from GenAlg_thesis import GenAlg
-from SCsettings_thesis import s1, s2, s3, s4, randomArgs, demandSample
+from model.GenAlg_thesis import GenAlg
+from model.SCsettings_thesis import s1, s2, s3, s4, randomArgs, demandSample
 from tqdm import tqdm
 import time
 import datetime
