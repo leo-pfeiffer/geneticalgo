@@ -70,4 +70,7 @@ for mx in mxs:
             print(datetime.datetime.now().strftime("%H:%M:%S"))
             results = results.append(row, ignore_index=True)
 
+            if mp == 0.5:
+                results.to_csv("success.csv", header=True, index=True)
+
 results.to_csv("results_S4.csv", header=True, index=True)
