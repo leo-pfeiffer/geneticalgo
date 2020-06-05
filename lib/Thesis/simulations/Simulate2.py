@@ -14,7 +14,6 @@ def simulate():
     T = 1200
     lower = 20
     upper = 60
-    tasks = 4
     max_gen = 10
     chromosomes = []
 
@@ -48,7 +47,7 @@ def simulate2():
     mp = 0.7
     cr = 0.8
 
-    arg = s4
+    arg = s3
 
     demand = demandSample(T, lower, upper, n_it, antithetic=True)
     tscc = []
@@ -72,7 +71,7 @@ def ga_process(its, demand, arg, mx, mp, cr, max_gen):
     chromosomes = []
     tscc = []
     for i in tqdm([*range(its)]):
-        GA = GenAlg(args=arg, demand=demand[i], mx=mx, mp=mp, cr=cr)
+        GA = GenAlg(args=arg, demand=demand[i], mx=mx, mp=mp, cr=cr, rechenberg=True)
         GA.runAlgorithm(maxGen=max_gen)
         tscc.append(GA.tscc)
         chromosomes.append(GA.par_pop[0].chromosome)
@@ -98,7 +97,7 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("s4.png")
+    plt.savefig("s3_rechenberg.png")
 
 
 if __name__ == "__main__":

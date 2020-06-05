@@ -26,16 +26,24 @@ class GenAlg:
         self.ilt = args['ilt']
         self.RMSilt = args['RMSilt']
         self.demand = demand
+        self.rechenberg = kwargs.get("rechenberg", False)
+        self.history = []
+        self.success_rate = 0
+        self.incs = 0
 
         for chrom in self.par_pop:
             chrom.evaluate(self.demand)
+            self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
 
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
             self.no_gen += 1
             # self.random_crossover()
             self.roulette_crossover()
-            self.mutation()
+            if self.rechenberg:
+                self.rechenberg_mutation()
+            else:
+                self.mutation()
             self.evaluation()
             # self.wheel_selection()
             self.elite_selection()
@@ -92,6 +100,28 @@ class GenAlg:
                     newGenes.append(gene)
             self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
 
+    def rechenberg_mutation(self):
+
+        if self.no_gen != 1:
+            if self.history[self.no_gen - 1] > self.history[self.no_gen - 2]:
+                self.incs += 1
+            self.success_rate = self.incs / (self.no_gen - 1)
+
+        if self.success_rate < 0.2:
+            self.x *= 0.9
+        else:
+            self.x *= 1.1
+
+        for c, chrom in enumerate(self.int_pop):
+            newGenes = []
+            for g, gene in enumerate(chrom.chromosome):
+                u = np.random.uniform(0, 1)
+                if u <= self.mr:
+                    newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u)))
+                else:
+                    newGenes.append(gene)
+            self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
+
     def evaluation(self):
         for chrom in self.int_pop:
             chrom.evaluate(self.demand)
@@ -115,6 +145,8 @@ class GenAlg:
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
 
+        self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
+
     def elite_selection(self):
         """Elitist selection"""
         self.par_pop = sorted(self.int_pop + self.par_pop, key=attrgetter('tscc'))[:self.n]
@@ -122,6 +154,7 @@ class GenAlg:
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
 
+        self.history.append(self.par_pop[0].tscc)
 
 class Chrom:
 
