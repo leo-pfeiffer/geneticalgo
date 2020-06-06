@@ -2,61 +2,41 @@ import concurrent.futures
 import numpy as np
 import pandas as pd
 from model.GenAlg_thesis import GenAlg
-from model.SCsettings_thesis import s1, s2, s3, s4, s5, s6, demandSample
+from model.SCsettings_thesis import s1, s2, s3, s4, s5, s6, demandSample, randomArgsBased
+from model.RandomSearch import RandomSearch
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import time
-import datetime
 
+def simulate(method):
+    args = (n_it, demand, arg, mx, mp, cr, max_gen)
 
-def simulate():
-    n_it = 8
-    T = 1200
-    lower = 20
-    upper = 60
-    max_gen = 10
-    chromosomes = []
+    if method == "GA":
+        fun = ga_process_wrapper
+    else:
+        fun = rs_process_wrapper
 
-    mx = 0.2
-    mp = 0.7
-    cr = 0.8
-
-    demand = demandSample(T, lower, upper, n_it, antithetic=True)
-
-    tscc = []
-    for i in range(n_it):
-        GA = GenAlg(args=s6, demand=demand[i], mx=mx, mp=mp, cr=cr)
-        GA.runAlgorithm(maxGen=max_gen)
-        tscc.append(GA.tscc)
-        chromosomes.append(GA.par_pop[0].chromosome)
+    chromosomes, tscc = fun(args)
 
     tscc = pd.DataFrame(tscc).T
     tscc['Mean'] = tscc.apply(np.mean, 1)
-
     return tscc, chromosomes
 
 
-def simulate2():
-    n_it = 30
-    T = 1200
-    lower = 20
-    upper = 60
-    tasks = 6
-    max_gen = 200
-    mx = 0.2
-    mp = 0.7
-    cr = 0.8
+def simulate_multiproc(method):
 
-    arg = s6
-
-    demand = demandSample(T, lower, upper, n_it, antithetic=True)
     tscc = []
     chromosomes = []
+
+    if method == "GA":
+        fun = ga_process_wrapper
+    else:
+        fun = rs_process_wrapper
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         demands = [a.tolist() for a in np.array_split(np.array(demand), tasks)]
         args = ((len(d), d, arg, mx, mp, cr, max_gen) for d in demands)
-        return_split = executor.map(ga_process_wrapper, args)
+        return_split = executor.map(fun, args)
 
         for ret in return_split:
             chromosomes += ret[0]
@@ -65,6 +45,21 @@ def simulate2():
     tscc = pd.DataFrame(tscc).T
     tscc['Mean'] = tscc.apply(np.mean, 1)
     return tscc, chromosomes
+
+
+def rs_process(its, demand, arg, mx, mp, cr, max_gen):
+    chromosomes = []
+    tscc = []
+    for i in tqdm([*range(its)]):
+        RS = RandomSearch(args=arg, demand=demand[i])
+        RS.runAlgorithm(maxGen=max_gen)
+        tscc.append(RS.tscc)
+        chromosomes.append(np.array(RS.parent))
+    return chromosomes, tscc
+
+
+def rs_process_wrapper(args):
+    return rs_process(*args)
 
 
 def ga_process(its, demand, arg, mx, mp, cr, max_gen):
@@ -97,11 +92,26 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("s6.png")
+    plt.savefig("s1_rs.png")
 
 
 if __name__ == "__main__":
+    n_it = 30
+    T = 1200
+    lower = 20
+    upper = 60
+    tasks = 6
+    max_gen = 200
+    mx = 0.2
+    mp = 0.7
+    cr = 0.8
+
+    # arg = s1
+    arg = randomArgsBased(s1, ilt=np.random.randint(1, 32, 4),
+                          rlt=np.random.randint(1, 32, 4), RMSilt=np.random.randint(1, 3))
+    demand = demandSample(T, lower, upper, n_it, antithetic=True)
+
     t = time.time()
-    tscc, chromosomes = simulate2()
+    tscc, chromosomes = simulate_multiproc(method="RS")
     plot(tscc, chromosomes)
-    print(time.time()-t)
+    print(time.time() - t)

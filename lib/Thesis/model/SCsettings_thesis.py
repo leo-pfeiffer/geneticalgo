@@ -132,6 +132,19 @@ def randomArgs():
     return randomargs
 
 
+def randomArgsBased(arg, **kwargs):
+    # so far only works for thesis (i.e. including ilt)
+    ilt = kwargs.get('ilt', arg['ilt'])
+    rlt = kwargs.get('rlt', arg['rlt'])
+    RMSilt = kwargs.get('RMSilt', arg['RMSilt'])
+    arg_out = arg
+    arg_out['ilt'] = ilt
+    arg_out['rlt'] = rlt
+    arg_out['RMSilt'] = RMSilt
+    print(arg_out)
+    return arg_out
+
+
 def demandSample(T, lower, upper, n_it, antithetic):
     if antithetic:
         sample = [np.random.randint(lower, upper + 1, T).tolist() for i in range(int(np.floor(n_it / 2)))]

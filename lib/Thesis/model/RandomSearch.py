@@ -10,7 +10,7 @@ class RandomSearch:
         self.l = 4  # length of chromosomes (=agents in supply chain)
         self.tscc = []  # save tscc of each generation for analysis
         self.no_gen = 0
-        self.a = 0.1   # relative search radius
+        self.a = 0.2   # relative search radius
 
         self.rlt = args['rlt']
         self.hcs = args['hcs']
@@ -56,5 +56,6 @@ class RandomSearch:
         self.child_tscc = runSC(self.child, args=self.args, demand=self.demand)
 
     def selection(self):
-        if self.child_tscc > self.par_tscc:
+        if self.child_tscc < self.par_tscc:
             self.parent = self.child
+            self.par_tscc = self.child_tscc

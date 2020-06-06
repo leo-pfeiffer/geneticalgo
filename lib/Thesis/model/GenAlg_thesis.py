@@ -3,8 +3,6 @@ from operator import attrgetter
 from copy import copy
 from random import shuffle
 from model.SupplyChain_thesis import returnTSCC, runSC
-import matplotlib.pyplot as plt
-import time
 
 
 class GenAlg:
