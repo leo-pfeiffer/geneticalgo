@@ -8,6 +8,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import time
 
+
 def simulate(method):
     args = (n_it, demand, arg, mx, mp, cr, max_gen)
 
@@ -24,7 +25,6 @@ def simulate(method):
 
 
 def simulate_multiproc(method):
-
     tscc = []
     chromosomes = []
 
