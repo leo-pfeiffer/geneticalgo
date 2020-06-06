@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from model.GenAlg_thesis import GenAlg
 from model.SupplyChain_thesis import runSC
-from model.SCsettings_thesis import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
+from model.SCsettings_thesis import a1, a2, a3, b1, b2, b3, s1, randomArgs, demandSample, Output
 import time
 
 """
@@ -88,18 +88,9 @@ df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
 
 aa, bb, cc, dd, ee, ss = 0, 0, 0, 0, 0, 0
 
-for i in range(1000):
-    args = a1
+for i in range(1):
+    args = s1
     demand = np.random.randint(20, 61, 1200).tolist()
-    tscc, a, b, c, d, e, s = runSC(args['opt'], args=args, demand=demand)
-    aa += a
-    bb += b
-    cc += c
-    dd += d
-    ee += e
-    ss += s
+    tscc = runSC(np.array([173, 261, 342, 415]), args=args, demand=demand, plot=True, runs=30)
 
-s = aa + bb + cc + dd + ee
-
-print("A", aa, "\nB", bb, "\nC", cc, "\nD", dd, "\nE", ee, "\nOverhead", ss, "-", s)
 int(0)

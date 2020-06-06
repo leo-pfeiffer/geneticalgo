@@ -97,6 +97,24 @@ s4 = {
     'RMSilt': 24
 }
 
+# test large costs
+s5 = {
+    'hcs': np.array([240, 160, 80, 20]),
+    'scs': np.array([480, 240, 120, 60]),
+    'rlt': np.array([2, 3, 4, 5]),
+    'ilt': np.array([1, 2, 3, 4]),
+    'RMSilt': 5
+}
+
+# test large lead times
+s6 = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.array([200, 100, 150, 2]),
+    'ilt': np.array([25, 100, 66, 39]),
+    'RMSilt': 33
+}
+
 
 def randomArgs():
     r = np.random.randint(1, 3)

@@ -2,7 +2,7 @@ import concurrent.futures
 import numpy as np
 import pandas as pd
 from model.GenAlg_thesis import GenAlg
-from model.SCsettings_thesis import s1, s2, s3, s4, demandSample
+from model.SCsettings_thesis import s1, s2, s3, s4, s5, s6, demandSample
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import time
@@ -25,7 +25,7 @@ def simulate():
 
     tscc = []
     for i in range(n_it):
-        GA = GenAlg(args=s1, demand=demand[i], mx=mx, mp=mp, cr=cr)
+        GA = GenAlg(args=s6, demand=demand[i], mx=mx, mp=mp, cr=cr)
         GA.runAlgorithm(maxGen=max_gen)
         tscc.append(GA.tscc)
         chromosomes.append(GA.par_pop[0].chromosome)
@@ -47,7 +47,7 @@ def simulate2():
     mp = 0.7
     cr = 0.8
 
-    arg = s3
+    arg = s6
 
     demand = demandSample(T, lower, upper, n_it, antithetic=True)
     tscc = []
@@ -97,7 +97,7 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("s3_rechenberg.png")
+    plt.savefig("s6.png")
 
 
 if __name__ == "__main__":
