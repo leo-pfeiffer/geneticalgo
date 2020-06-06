@@ -92,7 +92,7 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("s1_rs.png")
+    plt.savefig("s1.png")
 
 
 if __name__ == "__main__":
@@ -106,9 +106,9 @@ if __name__ == "__main__":
     mp = 0.7
     cr = 0.8
 
-    # arg = s1
-    arg = randomArgsBased(s1, ilt=np.random.randint(1, 32, 4),
-                          rlt=np.random.randint(1, 32, 4), RMSilt=np.random.randint(1, 3))
+    arg = s1
+    # arg = randomArgsBased(s1, ilt=np.random.randint(1, 32, 4),
+    #                      rlt=np.random.randint(1, 32, 4), RMSilt=np.random.randint(1, 3))
     demand = demandSample(T, lower, upper, n_it, antithetic=True)
 
     t = time.time()
