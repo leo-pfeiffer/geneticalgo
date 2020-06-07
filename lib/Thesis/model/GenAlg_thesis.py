@@ -43,8 +43,8 @@ class GenAlg:
             else:
                 self.mutation()
             self.evaluation()
-            # self.wheel_selection()
-            self.elite_selection()
+            self.wheel_selection()
+            # self.elite_selection()
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def roulette_crossover(self):

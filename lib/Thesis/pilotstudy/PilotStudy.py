@@ -7,12 +7,12 @@ from tqdm import tqdm
 import time
 import datetime
 
-n_it = 30
+n_it = 20
 T = 1200
 lower = 20
 upper = 60
 tasks = 6
-max_gen = 40
+max_gen = 25
 chromosomes = []
 
 demand = demandSample(T, lower, upper, n_it, antithetic=True)
@@ -22,9 +22,13 @@ results = pd.DataFrame(columns=["MX", "MP", "CR", "TSCC"])
 iterations = [*range(n_it)]
 
 
-mxs = [0.1, 0.2, 0.3, 0.4, 0.5]
-mps = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
-crs = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
+# mxs = [0.1, 0.2, 0.3, 0.4, 0.5]
+# mps = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
+# crs = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
+
+mxs = [0.1, 0.2, 0.3]
+mps = [0.6, 0.7, 0.8]
+crs = [0.7, 0.8, 0.9]
 
 
 def ga_process(its, demand, arg, mx, mp, cr):
@@ -42,7 +46,7 @@ def ga_process_wrapper(args):
     return ga_process(*args)
 
 
-arg = s4
+arg = s1
 geneticalgorithm = True
 
 for mx in mxs:
@@ -70,7 +74,4 @@ for mx in mxs:
             print(datetime.datetime.now().strftime("%H:%M:%S"))
             results = results.append(row, ignore_index=True)
 
-            if mp == 0.5:
-                results.to_csv("success.csv", header=True, index=True)
-
-results.to_csv("results_S4.csv", header=True, index=True)
+results.to_csv("GA2_S1.csv", header=True, index=True)
