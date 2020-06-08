@@ -6,7 +6,12 @@ from model.SCsettings_thesis import s1, s2, s3, s4, randomArgs, demandSample
 from tqdm import tqdm
 import time
 import datetime
+from twilio.rest import Client
 
+client = Client("AC5bd00437e693681bdc1e4ba2beb424aa", "52434840b2bdf26fdf0f821e936ec4fb")
+client.messages.create(to="+17645813979",
+                       from_="+17024257635",
+                       body="Simulation started.")
 n_it = 20
 T = 1200
 lower = 20
@@ -20,7 +25,6 @@ demand = demandSample(T, lower, upper, n_it, antithetic=True)
 results = pd.DataFrame(columns=["MX", "MP", "CR", "TSCC"])
 
 iterations = [*range(n_it)]
-
 
 # mxs = [0.1, 0.2, 0.3, 0.4, 0.5]
 # mps = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
@@ -46,7 +50,7 @@ def ga_process_wrapper(args):
     return ga_process(*args)
 
 
-arg = s1
+arg = s3
 geneticalgorithm = True
 
 for mx in mxs:
@@ -74,4 +78,10 @@ for mx in mxs:
             print(datetime.datetime.now().strftime("%H:%M:%S"))
             results = results.append(row, ignore_index=True)
 
-results.to_csv("GA2_S1.csv", header=True, index=True)
+filename = "GA2_S3.csv"
+results.to_csv(filename, header=True, index=True)
+
+
+client.messages.create(to="+4917645813979",
+                       from_="+17024257635",
+                       body="Simulation done. {} saved.".format(filename))

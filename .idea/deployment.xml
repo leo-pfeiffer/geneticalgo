@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="leopoldpfeiffer@172.93.48.32:22 password">
+  <component name="PublishConfigData" autoUpload="Always" serverName="leopoldpfeiffer@209.182.235.76:22 password">
     <serverData>
-      <paths name="leopoldpfeiffer@172.93.48.32:22">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/home/leopoldpfeiffer/projects/supplychain" local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="leopoldpfeiffer@172.93.48.32:22 password">
+      <paths name="leopoldpfeiffer@209.182.235.76:22 password">
         <serverdata>
           <mappings>
             <mapping deploy="/home/leopoldpfeiffer/projects/supplychain" local="$PROJECT_DIR$" />

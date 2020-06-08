@@ -25,6 +25,7 @@ class GenAlg:
         self.RMSilt = args['RMSilt']
         self.demand = demand
         self.rechenberg = kwargs.get("rechenberg", False)
+        self.rx = kwargs.get("rx", 0.1)
         self.history = []
         self.success_rate = 0
         self.incs = 0
@@ -43,8 +44,8 @@ class GenAlg:
             else:
                 self.mutation()
             self.evaluation()
-            self.wheel_selection()
-            # self.elite_selection()
+            # self.wheel_selection()
+            self.elite_selection()
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def roulette_crossover(self):
@@ -99,16 +100,16 @@ class GenAlg:
             self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
 
     def rechenberg_mutation(self):
-
         if self.no_gen != 1:
             if self.history[self.no_gen - 1] > self.history[self.no_gen - 2]:
                 self.incs += 1
             self.success_rate = self.incs / (self.no_gen - 1)
 
-        if self.success_rate < 0.2:
-            self.x *= 0.9
-        else:
-            self.x *= 1.1
+        if self.no_gen > 10:
+            if self.success_rate < 0.2:
+                self.x = self.x**(1+self.rx)
+            else:
+                self.x = self.x**(1-self.rx)
 
         for c, chrom in enumerate(self.int_pop):
             newGenes = []
