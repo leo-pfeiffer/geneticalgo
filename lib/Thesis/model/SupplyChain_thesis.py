@@ -1,7 +1,11 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
+import matplotlib.gridspec as gridspec#
+import random
+
+random.seed(123)
+np.random.seed(123)
 
 
 class Agent:

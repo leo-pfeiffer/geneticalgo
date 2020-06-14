@@ -1,9 +1,11 @@
 import numpy as np
 from operator import attrgetter
 from copy import copy
-from random import shuffle
+from random import shuffle, seed
 from model.SupplyChain_thesis import returnTSCC, runSC
 
+seed(123)
+np.random.seed(123)
 
 class GenAlg:
     def __init__(self, args, demand, **kwargs):
@@ -37,15 +39,15 @@ class GenAlg:
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
             self.no_gen += 1
-            # self.random_crossover()
-            self.roulette_crossover()
+            self.random_crossover()
+            # self.roulette_crossover()
             if self.rechenberg:
                 self.rechenberg_mutation()
             else:
                 self.mutation()
             self.evaluation()
-            # self.wheel_selection()
-            self.elite_selection()
+            self.wheel_selection()
+            # self.elite_selection()
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def roulette_crossover(self):
@@ -72,7 +74,7 @@ class GenAlg:
                 self.int_pop += [Chrom(genes=cross1, args=self.args, l=self.l),
                                  Chrom(genes=cross2, args=self.args, l=self.l)]
             else:
-                self.int_pop += self.pool[i*2:(i*2+1)]
+                self.int_pop += self.pool[i * 2:(i * 2 + 1)]
 
     def random_crossover(self):
         self.pool = copy(self.par_pop)
@@ -82,11 +84,11 @@ class GenAlg:
             u = np.random.uniform(0, 1)
             if u <= self.cr:
                 cut = np.random.randint(1, self.l)
-                cross1 = np.append(self.pool[i*2].chromosome[:cut], self.pool[i*2+1].chromosome[cut:])
-                cross2 = np.append(self.pool[i*2+1].chromosome[:cut], self.pool[i*2].chromosome[cut:])
+                cross1 = np.append(self.pool[i * 2].chromosome[:cut], self.pool[i * 2 + 1].chromosome[cut:])
+                cross2 = np.append(self.pool[i * 2 + 1].chromosome[:cut], self.pool[i * 2].chromosome[cut:])
                 self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
             else:
-                self.int_pop += self.pool[i*2:(i*2+1)]
+                self.int_pop += self.pool[i * 2:(i * 2 + 1)]
 
     def mutation(self):
         for c, chrom in enumerate(self.int_pop):
@@ -107,9 +109,9 @@ class GenAlg:
 
         if self.no_gen > 10:
             if self.success_rate < 0.2:
-                self.x = self.x**(1+self.rx)
+                self.x = self.x ** (1 + self.rx)
             else:
-                self.x = self.x**(1-self.rx)
+                self.x = self.x ** (1 - self.rx)
 
         for c, chrom in enumerate(self.int_pop):
             newGenes = []
@@ -154,6 +156,7 @@ class GenAlg:
             chrom.no = self.no_gen + i
 
         self.history.append(self.par_pop[0].tscc)
+
 
 class Chrom:
 

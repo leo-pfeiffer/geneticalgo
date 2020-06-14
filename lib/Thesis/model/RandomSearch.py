@@ -1,16 +1,19 @@
 import numpy as np
-from random import randint
+from random import randint, seed
 from model.SupplyChain_thesis import runSC
 import matplotlib.pyplot as plt
 
+seed(123)
+np.random.seed(123)
+
 
 class RandomSearch:
-    def __init__(self, args, demand):
+    def __init__(self, args, demand, **kwargs):
         self.args = args
         self.l = 4  # length of chromosomes (=agents in supply chain)
         self.tscc = []  # save tscc of each generation for analysis
         self.no_gen = 0
-        self.a = 0.2   # relative search radius
+        self.a = kwargs.get('rad', 0.1)   # relative search radius
 
         self.rlt = args['rlt']
         self.hcs = args['hcs']

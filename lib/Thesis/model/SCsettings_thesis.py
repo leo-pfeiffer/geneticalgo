@@ -1,5 +1,9 @@
 import numpy as np
 import pandas as pd
+import random
+
+random.seed(123)
+np.random.seed(123)
 
 # Default parameters from Daniel & Rajendran paper
 

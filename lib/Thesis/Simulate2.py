@@ -100,7 +100,7 @@ def plot(tscc, chromosomes):
 
     ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
-    plt.savefig("GA2_s2.png")
+    plt.savefig("GA4_s4.png")
 
 
 if __name__ == "__main__":
@@ -111,10 +111,10 @@ if __name__ == "__main__":
     tasks = 1
     max_gen = 200
     mx = 0.1
-    mp = 0.7
+    mp = 0.8
     cr = 0.9
 
-    arg = s2
+    arg = s4
     # arg = randomArgsBased(s1, ilt=np.random.randint(1, 32, 4),
     #                      rlt=np.random.randint(1, 32, 4), RMSilt=np.random.randint(1, 3))
     demand = demandSample(T, lower, upper, n_it, antithetic=True)

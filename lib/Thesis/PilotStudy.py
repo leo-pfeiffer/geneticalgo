@@ -8,7 +8,7 @@ import time
 import datetime
 from twilio.rest import Client
 
-client = Client("AC5bd00437e693681bdc1e4ba2beb424aa", "52434840b2bdf26fdf0f821e936ec4fb")
+client = Client("AC5bd00437e693681bdc1e4ba2beb424aa", "f7eaefa9b807b3304b02cc2b5c319ecb")
 client.messages.create(to="+4917645813979",
                        from_="+17024257635",
                        body="Simulation started.")
@@ -30,10 +30,14 @@ iterations = [*range(n_it)]
 # mps = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
 # crs = [0.5, 0.6, 0.7, 0.8, 0.9, 1]
 
-mxs = [0.1, 0.2, 0.3]
-mps = [0.6, 0.7, 0.8]
-crs = [0.7, 0.8, 0.9]
+# mxs = [0.1, 0.2, 0.3]
+# mps = [0.6, 0.7, 0.8]
+# crs = [0.7, 0.8, 0.9]
 rxs = [0.05, 0.1, 0.15, 0.2]
+
+mxs = [0.2]
+mps = [0.7]
+crs = [0.8]
 
 
 def ga_process(its, demand, arg, mx, mp, cr, rx):
@@ -83,6 +87,10 @@ for arg in [s1, s2, s3, s4]:
                     print(elapsed, "\n", row, "\n")
                     print(datetime.datetime.now().strftime("%H:%M:%S"))
                     results = results.append(row, ignore_index=True)
+
+                client.messages.create(to="+4917645813979",
+                                       from_="+17024257635",
+                                       body="Last done: MX: {}, MP: {}, CR: {}, RX: {}, TSCC: {}".format(mx, mp, cr, rx, tscc))
 
     if arg == s1:
         filename = "Rechenberg_S1.csv"
