@@ -12,8 +12,9 @@ class RandomSearch:
         self.args = args
         self.l = 4  # length of chromosomes (=agents in supply chain)
         self.tscc = []  # save tscc of each generation for analysis
+        self.history = []  # save solution of every generation
         self.no_gen = 0
-        self.a = kwargs.get('rad', 0.1)   # relative search radius
+        self.a = kwargs.get('rad', 0.9)   # relative search radius
 
         self.rlt = args['rlt']
         self.hcs = args['hcs']
@@ -62,3 +63,5 @@ class RandomSearch:
         if self.child_tscc < self.par_tscc:
             self.parent = self.child
             self.par_tscc = self.child_tscc
+
+        self.history.append({"TSCC": self.par_tscc, "CHROM": np.array(self.parent)})

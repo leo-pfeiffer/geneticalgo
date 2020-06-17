@@ -88,9 +88,13 @@ df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
 
 aa, bb, cc, dd, ee, ss = 0, 0, 0, 0, 0, 0
 
-for i in range(1):
+its=1000
+t=0
+
+for i in range(its):
     args = s1
     demand = np.random.randint(20, 61, 1200).tolist()
-    tscc = runSC(np.array([173, 261, 342, 415]), args=args, demand=demand, plot=True, runs=30)
+    tscc, t0 = runSC(np.array([173, 261, 342, 415]), args=args, demand=demand, plot=False)
+    t += t0
 
-int(0)
+print(t/its)

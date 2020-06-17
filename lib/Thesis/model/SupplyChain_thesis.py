@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec#
 import random
+import time
 
 random.seed(123)
 np.random.seed(123)
@@ -170,13 +171,14 @@ def runSC(chromosome, args, **kwargs):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
 
     S = SupplyChain(agents=agents, demand=demand)
+    t = time.time()
     S.simulate()
+    t0 = time.time() - t
 
     if plot:
         data = [x + y + z for x, y, z in zip(S.inventory, S.s_costs, S.h_costs)]
         cols = ["I1", "I2", "I3", "I4", "S1", "S2", "S3", "S4", "H1", "H2", "H3", "H4"]
         df = pd.DataFrame(data, columns=cols)
         create_plot(df)
-
 
     return S.tscc

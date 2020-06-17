@@ -34,13 +34,14 @@ class GenAlg:
 
         for chrom in self.par_pop:
             chrom.evaluate(self.demand)
-            self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
+            # self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
+            # self.best_chromosome_history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].chromosome)
 
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
             self.no_gen += 1
-            self.random_crossover()
-            # self.roulette_crossover()
+            # self.random_crossover()
+            self.roulette_crossover()
             if self.rechenberg:
                 self.rechenberg_mutation()
             else:
@@ -146,7 +147,9 @@ class GenAlg:
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
 
-        self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
+        # Save current best tscc to history
+        s = sorted(self.par_pop, key=attrgetter('tscc'))[0]
+        self.history.append({"TSCC": s.tscc, "CHROM": s.chromosome})
 
     def elite_selection(self):
         """Elitist selection"""
@@ -155,7 +158,7 @@ class GenAlg:
         for i, chrom in enumerate(self.par_pop):
             chrom.no = self.no_gen + i
 
-        self.history.append(self.par_pop[0].tscc)
+        self.history.append({"TSCC": self.par_pop[0].tscc, "CHROM": self.par_pop[0].chromosome})
 
 
 class Chrom:
