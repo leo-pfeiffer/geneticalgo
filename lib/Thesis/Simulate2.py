@@ -107,7 +107,7 @@ def plot(tscc, history):
     text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, " \
            "Supplier: {}\n--------------------------------------------------\nTSCC: {}"
     text = text.format(best[1][0], best[1][1], best[1][2], best[1][3], best[0])
-    # ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
+    ax.text(len(tscc) - 1, tscc.Mean.values[0], text, fontsize=10, va="top", ha="right")
 
     plt.savefig(filename+".png")
 
@@ -119,18 +119,18 @@ if __name__ == "__main__":
     upper = 60
     tasks = 1
     max_gen = 200
-    mx = 0.1
-    mp = 0.7
-    cr = 0.9
+    mx = 0.2
+    mp = 0.8
+    cr = 0.7
     rad = 0.9
-    filename = "RS_s4"
+    filename = "GA_s4"
     arg = s4
     # arg = randomArgsBased(s1, ilt=np.random.randint(1, 32, 4),
     #                      rlt=np.random.randint(1, 32, 4), RMSilt=np.random.randint(1, 3))
     demand = demandSample(T, lower, upper, n_it, antithetic=True)
 
     t = time.time()
-    tscc, history = simulate(method="RS")
+    tscc, history = simulate(method="GA")
     tscc.to_csv(filename+"_tscc.csv", header=True)
     pd.DataFrame(history).T.to_csv(filename+"_history.csv", header=True)
     plot(tscc, history)

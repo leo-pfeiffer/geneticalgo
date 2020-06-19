@@ -40,15 +40,15 @@ class GenAlg:
     def runAlgorithm(self, maxGen):
         while self.no_gen < maxGen:
             self.no_gen += 1
-            # self.random_crossover()
-            self.roulette_crossover()
+            self.random_crossover()
+            # self.roulette_crossover()
             if self.rechenberg:
                 self.rechenberg_mutation()
             else:
                 self.mutation()
             self.evaluation()
-            self.wheel_selection()
-            # self.elite_selection()
+            # self.wheel_selection()
+            self.elite_selection()
             self.tscc.append(self.par_pop[0].tscc)  # save tscc of current iteration
 
     def roulette_crossover(self):
