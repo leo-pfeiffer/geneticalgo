@@ -1,7 +1,6 @@
 import numpy as np
 from random import randint, seed
 from model.SupplyChain_thesis import runSC
-import matplotlib.pyplot as plt
 
 seed(123)
 np.random.seed(123)

@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec#
 import random
 import time
 
@@ -113,46 +112,8 @@ class SupplyChain:
         self.tscc = np.array(self.scc[0:]).cumsum()[-1]
 
 
-def create_plot(df):
-    fig = plt.figure(figsize=(12, 8), dpi=300)
-    gs = fig.add_gridspec(4, 1)
-    x = df.index.values
-
-    # ax1 = fig.add_subplot(gs[0:2, 0])
-    # ax1.plot(x, df[['I1', 'I2', 'I3', 'I4']], linewidth=0.75)
-    # ax1.set_title('Inventory per Period', fontsize=8)
-    # ax1.tick_params(axis='both', which='major', labelsize=8)
-    # ax1.set_ylim(ymin=0, ymax=max([y for x in df.iloc[10:, 0:3].values for y in x]))
-    # ax1.legend(['I1', 'I2', 'I3', 'I4'], labels=["Agent 1", "Agent 2", "Agent 3", "Agent 4"],
-    #            loc="upper right", fontsize=6)
-
-    ax2 = fig.add_subplot(gs[0, 0])
-    ax2.plot(x, df[['S1', 'H1']], linewidth=0.75)
-    ax2.set_title('Retailer Costs per Period', fontsize=8)
-    ax2.tick_params(axis='both', which='major', labelsize=6)
-    ax2.legend(['S1', 'H2'], labels=["Shortage cost", "Hoding cost"],
-               loc="upper right", fontsize=6)
-
-    ax3 = fig.add_subplot(gs[1, 0])
-    ax3.plot(x, df[['S2', 'H2']], linewidth=0.75)
-    ax3.set_title('Distributor Costs per Period', fontsize=8)
-    ax3.tick_params(axis='both', which='major', labelsize=6)
-
-    ax4 = fig.add_subplot(gs[2, 0])
-    ax4.plot(x, df[['S3', 'H3']], linewidth=0.75)
-    ax4.set_title('Manufacturer Costs per Period', fontsize=8)
-    ax4.tick_params(axis='both', which='major', labelsize=6)
-
-    ax5 = fig.add_subplot(gs[3, 0])
-    ax5.plot(x, df[['S4', 'H4']], linewidth=0.75)
-    ax5.set_title('Supplier Costs per Period', fontsize=8)
-    ax5.tick_params(axis='both', which='major', labelsize=6)
-
-    plt.savefig("costbreakupS1.png")
-    pass
-
-
 def returnTSCC(chromosome):
+    """Used for testing."""
     goal = [12, 13, 4, 17]
     return sum([abs(x - y) for x, y in zip(chromosome, goal)])
 
@@ -164,21 +125,12 @@ def runSC(chromosome, args, **kwargs):
     ilt = args['ilt']
     RMSilt = args['RMSilt']
     demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
-    plot = kwargs.get('plot', False)
     agents = []
 
     for i, chrom in enumerate(chromosome):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
 
     S = SupplyChain(agents=agents, demand=demand)
-    t = time.time()
     S.simulate()
-    t0 = time.time() - t
-
-    if plot:
-        data = [x + y + z for x, y, z in zip(S.inventory, S.s_costs, S.h_costs)]
-        cols = ["I1", "I2", "I3", "I4", "S1", "S2", "S3", "S4", "H1", "H2", "H3", "H4"]
-        df = pd.DataFrame(data, columns=cols)
-        create_plot(df)
 
     return S.tscc

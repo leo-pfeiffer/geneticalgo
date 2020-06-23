@@ -1,33 +1,27 @@
-from SimpleGA.FitnessFunctions import multimodal
-from SimpleGA.SimpleGenAlg import SimpleGenAlg
+from model.GenericGA.GenericGenAlg import SimpleGenAlg
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 import math
 import pandas as pd
-from SimpleGA.FitnessFunctions import multimodal
+from model.GenericGA.FitnessFunctions import multimodal
 
-# mrs = np.arange(0.05, 1, 0.05).tolist()
+
 mrs = np.arange(0.05, 1, 0.01).tolist()
 space = np.arange(5, 11, 1).tolist()
 simulations = 25
 delta = 0.1
 df = pd.DataFrame()
-labels = ["No optimum found",
-          r'$s_1$',
-          r'$s_2$',
-          r'$s_3$',
-          r'$s_4$']
+labels = ["No optimum found", r'$s_1$', r'$s_2$', r'$s_3$', r'$s_4$']
 
 
 def binner(x, delta):
     v1 = 3 * math.sqrt(3 / 10)
     v2 = math.sqrt(23 / 10)
-    # Could outsource this
-    min1 = multimodal([v1, -v1])
-    min2 = multimodal([-v1, v1])
-    min3 = multimodal([-v2, -v2])
-    min4 = multimodal([v2, v2])
+    min1 = multimodal([v1, -v1], 0, 0)
+    min2 = multimodal([-v1, v1], 0, 0)
+    min3 = multimodal([-v2, -v2], 0, 0)
+    min4 = multimodal([v2, v2], 0, 0)
 
     if abs(x - min1)/min1 <= delta:
         return 1
@@ -86,11 +80,13 @@ if __name__ == "__main__":
 
     df[["x", "y", "fitness"]].plot()
     plt.show()
+
     """
-    # df.to_csv("SimulationResults.csv")
+    # Plot and save output
+    df.to_csv("SimulationResults.csv")
     data = analyseSimulation(df=df, simulations=simulations)
     data.index = space
-    #data.to_csv("Solutions_MR072.csv", index=True, index_label="MR")
+    data.to_csv("Solutions_MR072.csv", index=True, index_label="MR")
     sss = [r'$[{}, {}]$'.format(-x, x) for x in space if x%5==0]
     plt.figure(figsize=(8, 4), dpi=300)
     plt.stackplot(space, data.loc[:, 0], data.loc[:, 1], data.loc[:, 2], data.loc[:, 3], data.loc[:, 4],
@@ -100,14 +96,6 @@ if __name__ == "__main__":
     plt.xlabel("Search space")
     plt.ylabel("Relative Frequency of Solution")
     plt.margins(0,0)
+    plt.savefig("Solutions_MR072.png")
     plt.show()
-    #plt.savefig("Solutions_MR072.png")
     """
-
-# x_values = [x[0] for x in GA.search]
-# y_values = [y[1] for y in GA.search]
-
-# fitness_history = GA.fitness
-# df = pd.DataFrame([[m] * max_gen, [s] * max_gen, x_values, y_values, fitness_history]).T
-# df.columns = ["x", "y", "fitness"]
-

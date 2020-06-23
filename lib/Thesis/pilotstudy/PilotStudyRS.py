@@ -1,16 +1,12 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-from model.GenAlg_thesis import GenAlg
 from model.RandomSearch import RandomSearch
-from model.SCsettings_thesis import s1, s2, s3, s4, randomArgs, demandSample
+from model.SCsettings_thesis import s1, s2, s3, s4, demandSample
 from tqdm import tqdm
 import time
 import random
 import datetime
-from twilio.rest import Client
-
-client = Client("AC5bd00437e693681bdc1e4ba2beb424aa", "f7eaefa9b807b3304b02cc2b5c319ecb")
 
 n_it = 20
 T = 1200
@@ -76,18 +72,14 @@ for arg in [s1, s2, s3, s4]:
         results = results.append(row, ignore_index=True)
 
     if s == 1:
-        filename = "RS_S1.csv"
+        filename = "results/RS/RS_S1.csv"
     elif s == 2:
-        filename = "RS_S2.csv"
+        filename = "results/RS/RS_S2.csv"
     elif s == 3:
-        filename = "RS_S3.csv"
+        filename = "results/RS/RS_S3.csv"
     elif s == 4:
-        filename = "RS_S4.csv"
+        filename = "results/RS/RS_S4.csv"
     results.to_csv(filename, header=True, index=True)
     print("S{} done".format(s))
     print("-----------Next iteration-------------")
     elapsed = (time.time() - t0) / 60
-
-client.messages.create(to="+4917645813979",
-                       from_="+17024257635",
-                       body="Simulation done.\nElapsed: {}\n{} saved.".format(elapsed, filename))

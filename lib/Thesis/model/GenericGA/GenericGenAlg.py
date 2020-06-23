@@ -3,14 +3,13 @@ from operator import attrgetter
 from tqdm import tqdm
 from random import uniform, shuffle
 from copy import copy
-
-from SimpleGA.FitnessFunctions import multimodal, rosenbrock
+from model.GenericGA.FitnessFunctions import multimodal, rosenbrock
 
 
 class SimpleGenAlg:
     def __init__(self, args, m):
         self.args = args
-        self.n = 4  # number of chromosomes (= pop_size); fixed
+        self.n = 4  # number of chromosomes (= pop_size)
         self.l = 2  # length of chromosomes (=agents in supply chain)
         self.par_pop = [Chrom(no=i, args=args, l=self.l) for i in range(1, self.n + 1)]  # parent population
         self.int_pop = []  # intermediate population
@@ -30,10 +29,10 @@ class SimpleGenAlg:
             pbar = tqdm(maxGen)
         while self.no_gen < maxGen:
             self.no_gen += 1
-            # self.selection()
             self.crossover()
             self.mutation()
-            self.survival()
+            self.survival() # elitist
+            # self.survival2()  # roulette wheel
 
             self.fitness.append(self.par_pop[0].fitness)  # save fitness of current iteration
             self.search.append(self.par_pop[0].chromosome)  # save best chromosome
@@ -106,4 +105,4 @@ class Chrom:
 
     def evaluate(self):
         """Call fitness function"""
-        self.fitness = rosenbrock(self.chromosome, a=1, b=100)
+        self.fitness = multimodal(self.chromosome, a=1, b=100)

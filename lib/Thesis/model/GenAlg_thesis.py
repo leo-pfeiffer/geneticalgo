@@ -34,14 +34,13 @@ class GenAlg:
 
         for chrom in self.par_pop:
             chrom.evaluate(self.demand)
-            # self.history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].tscc)
-            # self.best_chromosome_history.append(sorted(self.par_pop, key=attrgetter('tscc'))[0].chromosome)
 
     def runAlgorithm(self, maxGen):
+        """Comment out unwanted configurations!"""
         while self.no_gen < maxGen:
             self.no_gen += 1
-            self.random_crossover()
-            # self.roulette_crossover()
+            # self.random_crossover()
+            self.roulette_crossover()
             if self.rechenberg:
                 self.rechenberg_mutation()
             else:
@@ -183,5 +182,5 @@ class Chrom:
 
     def evaluate(self, demand):
         """Run the SC model and evaluate TSCC"""
-        # self.tscc = returnTSCC(self.chromosome)
+        # self.tscc = returnTSCC(self.chromosome)   # used for testing
         self.tscc = runSC(self.chromosome, args=self.args, demand=demand)
