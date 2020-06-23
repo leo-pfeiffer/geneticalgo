@@ -52,11 +52,11 @@ class SupplyChain:
                 if agent.no != 3:
                     upstream = self.agents[agent.no + 1]
 
-                # 1 scheduled receipt of material at agent
+                # scheduled receipt of material at agent
                 agent.onHandInventory += agent.receive[t]
                 agent.onOrderInventory -= agent.receive[t]
 
-                # 2 backlog is filled as much as possible
+                # backlog is filled as much as possible
                 if agent.backlog > 0:
                     newBacklog = max(agent.backlog - agent.onHandInventory, 0)
 
@@ -69,21 +69,18 @@ class SupplyChain:
                     agent.onHandInventory = max(agent.onHandInventory - agent.backlog, 0)
                     agent.backlog = newBacklog
 
-                # 3 agents receive demand/order quantity from immediate downstream member
+                # agents receive demand/order quantity from immediate downstream member
                 if agent.no == 0:
                     agent.order[t] = self.demand[t]  # in theory: self.demand[t - agent.ilt] but this is equivalent
 
-                # 4
                 # send order to upstream -> received immediately
                 # calculate end of period onHandInventory
                 shipment = min(agent.order[t], agent.onHandInventory)
 
-                # 5
                 # order fulfillment. demand/order of t is fulfilled based on inventory
                 # if not all can be fulfilled => backlog
                 if agent.no != 0:
                     downstream.receive[t + downstream.rlt] += shipment
-                    # customer shipment neglected
 
                 agent.onHandInventory -= shipment
                 agent.backlog += agent.order[t] - shipment
@@ -97,12 +94,12 @@ class SupplyChain:
                     # supplier receives order from infinite source after rlt + ILT
                     agent.receive[t + agent.rlt + agent.RMSilt] += orderQuantity
 
-                # 6 update inventory and calculate local costs
+                # update inventory and calculate local costs
                 agent.onOrderInventory += orderQuantity
                 agent.holdingcost_is = agent.holdingcost_rate * agent.onHandInventory
                 agent.shortagecost_is = agent.shortagecost_rate * agent.backlog
 
-            # 7 calculate supply chain contexts
+            # calculate supply chain contexts
             self.scc[t] = sum([x.holdingcost_is + x.shortagecost_is for x in self.agents])
 
             self.h_costs.append([x.holdingcost_is for x in self.agents])
