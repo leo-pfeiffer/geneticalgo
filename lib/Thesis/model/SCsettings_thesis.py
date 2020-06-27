@@ -57,6 +57,24 @@ s6 = {
     'RMSilt': 33
 }
 
+# Paper
+
+A = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.array([2, 3, 4, 5]),
+    'ilt': np.random.randint(0, 11, 4),
+    'RMSilt': np.random.randint(0, 11, 1)[0]
+}
+
+B = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.random.randint(0, 10, 4),
+    'ilt': np.random.randint(0, 10, 4),
+    'RMSilt': np.random.randint(0, 10, 1)[0]
+}
+
 
 def randomArgsBased(arg, **kwargs):
     """Creates random arguments. Not used in thesis"""

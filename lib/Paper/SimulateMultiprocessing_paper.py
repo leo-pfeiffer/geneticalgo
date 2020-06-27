@@ -1,9 +1,9 @@
 import concurrent.futures
 import numpy as np
 import pandas as pd
-from Paper.SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
+from SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 from tqdm import tqdm
-from Paper.SupplyChain_paper import runSC
+from SupplyChain_paper import runSC
 import time
 
 n_it = 1000

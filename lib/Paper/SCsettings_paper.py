@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-# Default parameters from the paper
+# Default parameters from Daniel Rajendran:
 
 a1 = {
     'hcs': np.array([8, 4, 2, 1]),
@@ -50,6 +50,12 @@ b3 = {
     'opt': [91, 138, 265, 180],
     'ought': [406393, 14161]
 }
+
+
+# Own test settings:
+
+A = {}
+B = {}
 
 
 def randomArgs():
