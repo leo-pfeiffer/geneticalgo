@@ -6,7 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/lib/Thesis" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lib/Paper" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Remote Python 3.8.2 (sftp://leopoldpfeiffer@209.182.235.76:22/usr/bin/python3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

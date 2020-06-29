@@ -46,17 +46,17 @@ class SupplyChain:
 
             # Change Lead Times every period
             if self.name == 'A':
-                ilt = np.random.randint(0, 11, 4)
-                RMSilt = np.random.randint(0, 11, 1)[0]
+                ilt = np.random.randint(0, 5, 4)
+                RMSilt = np.random.randint(0, 5, 1)[0]
 
                 for i, agent in enumerate(self.agents):
                     agent.ilt = ilt[i]
                     agent.RMSilt = RMSilt
 
             if self.name == 'B:':
-                rlt = np.random.randint(0, 11, 4)
-                ilt = np.random.randint(0, 11, 4)
-                RMSilt = np.random.randint(0, 11, 1)[0]
+                rlt = np.random.randint(0, 5, 4)
+                ilt = np.random.randint(0, 5, 4)
+                RMSilt = np.random.randint(0, 5, 1)[0]
 
                 for i, agent in enumerate(self.agents):
                     agent.ilt = ilt[i]
@@ -142,7 +142,7 @@ def runSC(chromosome, args, **kwargs):
     RMSilt = args['RMSilt']
     demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
     agents = []
-    name = kwargs.get('name', 'A')
+    name = kwargs.get('name')
 
     for i, chrom in enumerate(chromosome):
         agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
