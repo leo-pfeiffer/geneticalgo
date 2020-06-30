@@ -1,12 +1,8 @@
 import numpy as np
 import time
-import random
 from tqdm import tqdm
 from model.SupplyChain2 import runSC
 import pandas as pd
-
-random.seed(123)
-np.random.seed(123)
 
 
 def simulate(name):
@@ -34,7 +30,7 @@ def simulate(name):
         tscc_list.append(tscc)
 
     tscc_df = pd.DataFrame(tscc_list)
-    tscc_df.to_csv(name + '.csv')
+    tscc_df.to_csv(name + '2.csv')
     print('\n', name, 'Done. Time:', time.time() - t, '\n\n')
 
 

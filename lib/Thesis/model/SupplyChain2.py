@@ -4,10 +4,6 @@ import matplotlib.pyplot as plt
 import random
 import time
 
-random.seed(123)
-np.random.seed(123)
-
-
 class Agent:
 
     def __init__(self, no, basestock, ilt, rlt, RMSilt, hcs, scs):
