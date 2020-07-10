@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import random
 import time
 
+
 class Agent:
 
     def __init__(self, no, basestock, ilt, rlt, RMSilt, hcs, scs):
@@ -145,6 +146,7 @@ class SupplyChain:
             self.inventory.append([x.onHandInventory for x in self.agents])
 
         self.tscc = np.array(self.scc[0:]).cumsum()[-1]
+
 
 def returnTSCC(chromosome):
     """Used for testing."""

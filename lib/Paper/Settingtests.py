@@ -1,1 +1,0 @@
-from SCsettings_paper import A, B

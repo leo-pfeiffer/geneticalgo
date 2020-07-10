@@ -3,8 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 from GenAlg_paper import GenAlg
-from SupplyChain_paper import runSC
-from SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample
+from model.SupplyChain_paper import runSC
+from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample
 import time
 
 # Choose the desired setting
