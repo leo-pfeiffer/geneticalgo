@@ -7,24 +7,36 @@ from model.SupplyChain_paper import runSC
 from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
 import time
 
+
 # Choose the desired setting
-args = a1
 
-tscc = []
-max_gen = 40
-chromosomes = []
-iterations = [*range(30)]
+def run(args, name):
+    tscc = []
+    max_gen = 300
+    chromosomes = []
+    iterations = [*range(30)]
 
-for i in tqdm(iterations):
-    GA = GenAlg(args=args)
-    GA.runAlgorithm(maxGen=max_gen)
-    tscc.append(GA.tscc)
-    chromosomes.append(GA.par_pop[0].chromosome)
+    for i in tqdm(iterations):
+        GA = GenAlg(args=args)
+        GA.runAlgorithm(maxGen=max_gen)
+        tscc.append(GA.tscc)
+        chromosomes.append(GA.par_pop[0].chromosome)
 
-avg_tscc = np.mean(tscc, axis=0)
-sd_tscc = np.std(tscc, axis=0)
+    avg_tscc = np.mean(tscc, axis=0)
+    sd_tscc = np.std(tscc, axis=0)
 
-# pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv("Report.csv")
+    pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv(f"Report_{name}.csv")
+    a = [x[-1] for x in tscc]
+    b = [list(x) for x in chromosomes]
+    c = [[a[i]] + b[i] for i in range(len(a))]
+    pd.DataFrame(c).to_csv(f"Chromosomes_{name}.csv")
+
+
+run(a1, 'a1')
+run(a3, 'a3')
+run(b2, 'b2')
+
+"""
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
@@ -42,7 +54,7 @@ ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
 plt.show()
 
 """
-
+"""
 
 # Run SC only with given base-stock
 
