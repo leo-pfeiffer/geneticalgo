@@ -24,7 +24,7 @@ def simulate(name):
             'RMSilt': np.random.randint(0, 5, 1)[0]
             }
 
-        tscc = runSC(chromosome=[100, 100, 100, 100], args=arg, name=name, demand=demand, ilt_list=ilt)
+        tscc = runSC(chromosome=[100, 100, 100, 100], args=arg, demand=demand, ilt_list=ilt)
         tscc_list.append(tscc)
 
     tscc_df = pd.DataFrame(tscc_list)
