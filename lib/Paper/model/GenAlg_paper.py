@@ -1,6 +1,7 @@
 import numpy as np
 from operator import attrgetter
-from model.SupplyChain_paper import returnTSCC, runSC
+# from model.SupplyChain_paper import returnTSCC, runSC
+from model.SupplyChain2 import runSC
 import matplotlib.pyplot as plt
 
 

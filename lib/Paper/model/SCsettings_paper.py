@@ -51,6 +51,22 @@ b3 = {
     'ought': [406393, 14161]
 }
 
+advanced_A = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.array([2, 3, 4, 5]),
+    'ilt': np.random.randint(0, 5, 4),
+    'RMSilt': np.random.randint(0, 5, 1)[0]
+}
+
+advanced_B = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': np.random.randint(0, 5, 4),
+    'ilt': np.random.randint(0, 5, 4),
+    'RMSilt': np.random.randint(0, 5, 1)[0]
+}
+
 
 # Own test settings:
 

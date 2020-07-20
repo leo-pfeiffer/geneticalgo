@@ -1,11 +1,8 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 from model.GenAlg_paper import GenAlg
-from model.SupplyChain_paper import runSC
-from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, randomArgs, demandSample, Output
-import time
+from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, advanced_A, advanced_B, randomArgs, demandSample, Output
 
 
 # Choose the desired setting
@@ -32,9 +29,38 @@ def run(args, name):
     pd.DataFrame(c).to_csv(f"Chromosomes_{name}.csv")
 
 
-run(a1, 'a1')
-run(a3, 'a3')
-run(b2, 'b2')
+def run2(args, name):
+    """This allows for nonzero lead times"""
+    tscc = []
+    max_gen = 300
+    chromosomes = []
+    iterations = [*range(30)]
+
+    for i in tqdm(iterations):
+        GA = GenAlg(args=args)
+        GA.runAlgorithm(maxGen=max_gen)
+        tscc.append(GA.tscc)
+        chromosomes.append(GA.par_pop[0].chromosome)
+
+    avg_tscc = np.mean(tscc, axis=0)
+    sd_tscc = np.std(tscc, axis=0)
+
+    pd.DataFrame([avg_tscc, sd_tscc]).T.to_csv(f"Report_{name}.csv")
+    a = [x[-1] for x in tscc]
+    b = [list(x) for x in chromosomes]
+    c = [[a[i]] + b[i] for i in range(len(a))]
+    pd.DataFrame(c).to_csv(f"Chromosomes_{name}.csv")
+
+
+# run(a1, 'a1')
+# run(a3, 'a3')
+# run(b2, 'b2')
+
+run(advanced_A, "advanded_A")
+run(advanced_B, "advanded_B")
+
+
+
 
 """
 
