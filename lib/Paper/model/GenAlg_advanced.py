@@ -1,3 +1,5 @@
+# random lead times
+
 import numpy as np
 from operator import attrgetter
 from copy import copy
@@ -9,11 +11,13 @@ np.random.seed(123)
 
 
 class GenAlg:
-    def __init__(self, args, demand, **kwargs):
+    def __init__(self, args, demand, ilt_list, rlt_list, **kwargs):
         self.args = args
+        self.ilt_list = ilt_list
+        self.rlt_list = rlt_list
         self.n = 20  # number of chromosomes (= pop_size); fixed
         self.l = 4  # length of chromosomes (=agents in supply chain)
-        self.par_pop = [Chrom(no=i, args=args) for i in range(1, self.n + 1)]  # parent population
+        self.par_pop = [Chrom(no=i, args=args, ilt_list=ilt_list, rlt_list=rlt_list) for i in range(1, self.n + 1)]  # parent population
         self.int_pop = []  # intermediate population
         self.pool = []  # mating pool; changes every iteration
         self.cr = kwargs.get('cr', 0.7)  # crossover rate (probability)
@@ -72,8 +76,8 @@ class GenAlg:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i * 2].chromosome[:cut], self.pool[i * 2 + 1].chromosome[cut:])
                 cross2 = np.append(self.pool[i * 2 + 1].chromosome[:cut], self.pool[i * 2].chromosome[cut:])
-                self.int_pop += [Chrom(genes=cross1, args=self.args, l=self.l),
-                                 Chrom(genes=cross2, args=self.args, l=self.l)]
+                self.int_pop += [Chrom(genes=cross1, args=self.args, l=self.l, ilt_list=self.ilt_list, rlt_list=self.rlt_list),
+                                 Chrom(genes=cross2, args=self.args, l=self.l, ilt_list=self.ilt_list, rlt_list=self.rlt_list)]
             else:
                 self.int_pop += self.pool[i * 2:(i * 2 + 1)]
 
@@ -87,7 +91,8 @@ class GenAlg:
                 cut = np.random.randint(1, self.l)
                 cross1 = np.append(self.pool[i * 2].chromosome[:cut], self.pool[i * 2 + 1].chromosome[cut:])
                 cross2 = np.append(self.pool[i * 2 + 1].chromosome[:cut], self.pool[i * 2].chromosome[cut:])
-                self.int_pop += [Chrom(genes=cross1, args=self.args), Chrom(genes=cross2, args=self.args)]
+                self.int_pop += [Chrom(genes=cross1, args=self.args, ilt_list=self.ilt_list, rlt_list=self.rlt_list),
+                                 Chrom(genes=cross2, args=self.args, ilt_list=self.ilt_list, rlt_list=self.rlt_list)]
             else:
                 self.int_pop += self.pool[i * 2:(i * 2 + 1)]
 
@@ -100,7 +105,8 @@ class GenAlg:
                     newGenes.append(int(np.floor(gene * (1 - self.x) + gene * 2 * self.x * u)))
                 else:
                     newGenes.append(gene)
-            self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args)
+            self.int_pop[c] = Chrom(genes=np.array(newGenes), args=self.args,
+                                    ilt_list=self.ilt_list, rlt_list=self.rlt_list)
 
     def rechenberg_mutation(self):
         if self.no_gen != 1:
@@ -166,8 +172,14 @@ class Chrom:
     def __init__(self, **kwargs):
         self.args = kwargs.get('args')
         self.no = kwargs.get('no', -999)
-        self.minRLT = np.array(self.args['rlt']) + np.array(self.args['ilt'][1:].tolist() + [self.args['RMSilt']])
-        self.maxRLT = np.cumsum(self.minRLT[::-1])[::-1]
+        self.ilt_list = kwargs.get('ilt_list')
+        self.rlt_list = kwargs.get('rlt_list')
+        # todo: make the next line variable
+        # self.minRLT = np.array([0, 0, 0, 0])
+        self.minRLT = np.array([2, 3, 4, 5])
+        # self.minRLT = np.array(self.args['rlt']) + np.array(self.args['ilt'][1:].tolist() + [self.args['RMSilt']])
+        # todo: make the next line variable
+        self.maxRLT = np.cumsum(np.array([5, 5, 5, 5])[::-1])[::-1]
         self.lowerU = 20
         self.upperU = 60
         self.chromosome = kwargs.get('genes', self.generateChromosome())
@@ -185,4 +197,5 @@ class Chrom:
     def evaluate(self, demand):
         """Run the SC model and evaluate TSCC"""
         # self.tscc = returnTSCC(self.chromosome)   # used for testing
-        self.tscc = runSC(self.chromosome, args=self.args, demand=demand, ilt_list=self.ilt)
+        self.tscc = runSC(self.chromosome, args=self.args, demand=demand,
+                          ilt_list=self.ilt_list, rlt_list=self.rlt_list)

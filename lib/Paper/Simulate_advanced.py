@@ -1,21 +1,27 @@
+# random lead times
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from model.GenAlg_advanced import GenAlg
-from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, advanced_A, advanced_B, randomArgs, demandSample, Output
+from model.SCsettings_paper import a1, a2, a3, b1, b2, b3, advanced_A, advanced_B, \
+    randomArgs, demandSample, Output, randomLTlist
 
 
 def run2(args, name):
     """This allows for nonzero lead times"""
+    T = 1200
     tscc = []
-    max_gen = 300
+    max_gen = 30
     chromosomes = []
-    n_it = 30
+    n_it = 4
     iterations = [*range(n_it)]
     demand = demandSample(1200, 20, 60, n_it, antithetic=True)
+    ilt_list = randomLTlist(args['ilt'], T, n_it, ilt=True)
+    rlt_list = randomLTlist(args['rlt'], T, n_it, ilt=False)
 
     for i in tqdm(iterations):
-        GA = GenAlg(args=args, demand=demand)
+        GA = GenAlg(args=args, ilt_list=ilt_list[i], rlt_list=rlt_list[i], demand=demand[i])
         GA.runAlgorithm(maxGen=max_gen)
         tscc.append(GA.tscc)
         chromosomes.append(GA.par_pop[0].chromosome)
@@ -30,66 +36,21 @@ def run2(args, name):
     pd.DataFrame(c).to_csv(f"Chromosomes_{name}.csv")
 
 
-# run(a1, 'a1')
-# run(a3, 'a3')
-# run(b2, 'b2')
+argA = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': {'arr': np.array([2, 3, 4, 5]), 'rand': False},
+    'ilt': {'lower': 0, 'upper': 4, 'rand': True},
+    'RMSilt': [0]
+}
 
-run2(advanced_A, "advanded_A")
-run2(advanced_B, "advanded_B")
+argB = {
+    'hcs': np.array([4, 3, 2, 1]),
+    'scs': np.array([8, 6, 4, 2]),
+    'rlt': {'lower': 0, 'upper': 4, 'rand': True},
+    'ilt': {'lower': 0, 'upper': 4, 'rand': True},
+    'RMSilt': [0]
+}
 
-
-
-
-"""
-
-fig = plt.figure()
-ax = fig.add_subplot(1, 1, 1)
-ax.plot([*range(max_gen)], avg_tscc)[0]
-ax.set_ylabel("TSCC")
-ax.set_xlabel("Generation number")
-
-best_chrom = chromosomes[np.argmin([x[-1] for x in tscc])].tolist()
-text = "Best policy:\nRetailer: {}, Distributer: {},\nManufacturer: {}, Supplier: {}\nTSCC: {}"
-text = text.format(best_chrom[0], best_chrom[1], best_chrom[2], best_chrom[3], avg_tscc[-1])
-
-ax.text(max_gen - 1, avg_tscc[0], text, fontsize=10, va="top", ha="right")
-
-# plt.savefig("Report.png")
-plt.show()
-
-"""
-"""
-
-# Run SC only with given base-stock
-
-# Setup random sampling:
-
-n_it = 1000
-T = 1200
-lower = 20
-upper = 60
-
-demand = demandSample(T, lower, upper, n_it, antithetic=True)
-
-results = []
-tscc = []
-ought = []
-
-iterations = [*range(n_it)]
-
-start = time.time()
-
-for a, arg in enumerate([a1]):
-    for j in tqdm(iterations):
-        # arg = randomArgs()
-        tscc1 = runSC(arg['opt'], args=arg, demand=demand[j])
-        tscc.append(tscc1)
-
-    results.append([np.mean(tscc), np.std(tscc)])
-    tscc = []
-    ought.append(arg['ought'])
-
-elapsed = time.time() - start
-
-df, ought_df, delta_perc, delta_abs = Output(results, ought, elapsed)
-"""
+run2(args=argA, name='A')
+run2(args=argB, name='B')

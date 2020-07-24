@@ -100,6 +100,16 @@ def demandSample(T, lower, upper, n_it, antithetic):
         return [np.random.randint(lower, upper + 1, T).tolist() for i in range(n_it)]
 
 
+def randomLTlist(arg, T, n_it, ilt: bool):
+    """lower and upper inclusive"""
+
+    if arg["rand"]:
+        return [[np.random.randint(arg['lower'], arg['upper']+1, 4+ilt) for t in range(T)] for n in range(n_it)]
+
+    else:
+        return [[arg['arr'] for t in range(T)] for n in range(n_it)]
+
+
 def Output(results, ought, elapsed):
     df = pd.DataFrame(results, columns=["Mean", "SD"]).astype(int)
     ought_df = pd.DataFrame(ought, columns=["Mean", "SD"]).astype(int)

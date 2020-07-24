@@ -1,15 +1,13 @@
+# Random lead times
+
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import random
-import time
 
 
 class Agent:
 
     def __init__(self, no, basestock, ilt, rlt, RMSilt, hcs, scs):
         self.no = no
-        self.T = 100
+        self.T = 1200
         self.basestock = basestock
         self.ilt = ilt
         self.RMSilt = RMSilt
@@ -27,9 +25,9 @@ class Agent:
 
 class SupplyChain:
 
-    def __init__(self, agents, demand, ilt_list):
+    def __init__(self, agents, demand, ilt_list, rlt_list):
         self.agents = agents
-        self.T = 100
+        self.T = 1200
         self.demand = demand
         self.scc = [0] * self.T
         self.tscc = 0
@@ -37,19 +35,18 @@ class SupplyChain:
         self.s_costs = []
         self.inventory = []
         self.ilt_list = ilt_list
+        self.rlt_list = rlt_list
 
     def simulate(self):
-        def rec(t):
-            return [x.receive[t] for x in self.agents]
-
-        bl = []
 
         for t in range(0, self.T):
 
+            rlt = self.rlt_list[t]
             ilt = self.ilt_list[t][0:4]
             RMSilt = self.ilt_list[t][4]
 
             for i, agent in enumerate(self.agents):
+                agent.rlt = rlt[i]
                 agent.ilt = ilt[i]
                 agent.RMSilt = RMSilt
 
@@ -125,19 +122,25 @@ def returnTSCC(chromosome):
 
 
 def runSC(chromosome, args, **kwargs):
-    rlt = args['rlt']
+    # dummy data
+    rlt = np.array([0, 0, 0, 0])
+    # dummy data
+    ilt = np.array([0, 0, 0, 0])
+    RMSilt = np.array([0])
+
     hcs = args['hcs']
     scs = args['scs']
-    ilt = args['ilt']
-    RMSilt = args['RMSilt']
-    demand = kwargs.get('demand', np.random.randint(20, 61, 100))
+
+    demand = kwargs.get('demand', np.random.randint(20, 61, 1200))
     agents = []
-    ilt_list = kwargs.get('ilt_list', np.random.randint(0, 5, 100))
 
-    for i, chrom in enumerate(chromosome):
-        agents.append(Agent(no=i, basestock=chrom, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
+    ilt_list = kwargs.get('ilt_list', np.random.randint(0, 5, 1200))
+    rlt_list = kwargs.get('rlt_list', np.random.randint(0, 5, 1200))
 
-    S = SupplyChain(agents=agents, demand=demand, ilt_list=ilt_list)
+    for i, gene in enumerate(chromosome):
+        agents.append(Agent(no=i, basestock=gene, rlt=rlt[i], hcs=hcs[i], RMSilt=RMSilt, scs=scs[i], ilt=ilt[i]))
+
+    S = SupplyChain(agents=agents, demand=demand, ilt_list=ilt_list, rlt_list=rlt_list)
     S.simulate()
 
     return S.tscc
