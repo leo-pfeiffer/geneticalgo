@@ -12,9 +12,9 @@ def run2(args, name):
     """This allows for nonzero lead times"""
     T = 1200
     tscc = []
-    max_gen = 30
+    max_gen = 300
     chromosomes = []
-    n_it = 4
+    n_it = 30
     iterations = [*range(n_it)]
     demand = demandSample(1200, 20, 60, n_it, antithetic=True)
     ilt_list = randomLTlist(args['ilt'], T, n_it, ilt=True)
